@@ -31,12 +31,15 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = Cookies.get(REFRESH_TOKEN_KEY);
-        if (!refreshToken) throw new Error('No refresh token');
+        const refresh_token = Cookies.get(REFRESH_TOKEN_KEY);
+        if (!refresh_token) throw new Error('No refresh token');
+
+        const formData = new FormData();
+        formData.append('refresh_token', refresh_token);
 
         const { data } = await axios.post<AuthResponse>(
           'https://rest-test.machineheads.ru/auth/token-refresh',
-          { refreshToken },
+          formData,
         );
 
         storeTokens(data);
@@ -60,12 +63,6 @@ export function storeTokens(tokens: AuthTokens) {
   api.defaults.headers.common['Authorization'] = `Bearer ${tokens.access_token}`;
 }
 
-export function clearTokens() {
-  Cookies.remove(TOKEN_KEY);
-  Cookies.remove(REFRESH_TOKEN_KEY);
-  delete api.defaults.headers.common['Authorization'];
-}
-
 export const authAPI = {
   async login(credentials: AuthCredentials): Promise<AuthResponse> {
     const formData = new FormData();
@@ -76,8 +73,8 @@ export const authAPI = {
     return data;
   },
 
-  async refreshToken(refreshToken: string): Promise<AuthResponse> {
-    const { data } = await api.post<AuthResponse>('/auth/token-refresh', { refreshToken });
+  async refreshToken(refresh_token: string): Promise<AuthResponse> {
+    const { data } = await api.post<AuthResponse>('/auth/token-refresh', { refresh_token });
     return data;
   }
 };
