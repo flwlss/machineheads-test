@@ -5,9 +5,9 @@ import type { Tag } from "../../types/tags";
 import { SET_ALL_AUTHORS, SET_ALL_POSTS, SET_ALL_TAGS } from "../constants";
 
 type ContentState = {
-  allPosts: Post[];
-  allAuthors: Author[];
-  allTags: Tag[];
+  allAuthors: Author[] | null;
+  allPosts: Post[] | null;
+  allTags: Tag[] | null;
 };
 
 type Action =
@@ -16,9 +16,9 @@ type Action =
   | { type: typeof SET_ALL_TAGS; payload: Tag[] };
 
 const initialState: ContentState = {
-  allPosts: [],
-  allAuthors: [],
-  allTags: [],
+  allAuthors: null,
+  allPosts: null,
+  allTags: null,
 };
 
 const content = (
@@ -26,15 +26,15 @@ const content = (
   action: Action
 ): ContentState => {
   switch (action.type) {
-    case SET_ALL_POSTS:
-      return {
-        ...state,
-        allPosts: action.payload
-      };
     case SET_ALL_AUTHORS:
       return {
         ...state,
         allAuthors: action.payload
+      };
+    case SET_ALL_POSTS:
+      return {
+        ...state,
+        allPosts: action.payload
       };
     case SET_ALL_TAGS:
       return {

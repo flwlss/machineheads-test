@@ -37,8 +37,27 @@ li {
   text-decoration: none;
 }
 
+body {
+  background-color: #f0f2f5;
+}
+
 .authPageWrapper {
   min-height: 100vh;
   display: grid;
   place-items: center;
+}
+
+.container {
+  padding: 20px 0 50px 50px
+}
+
+.authors {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 15px;
+}
+
+.authors img {
+  height: 200px;
+  object-fit: cover;
 }

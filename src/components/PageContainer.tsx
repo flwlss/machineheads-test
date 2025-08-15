@@ -8,7 +8,7 @@ const PageContainer = ({ children }: IPageContainer) => {
   return (
     <>
       <HeaderNav />
-      <main>
+      <main className="container">
         {children}
       </main>
     </>
