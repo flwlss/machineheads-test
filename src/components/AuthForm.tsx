@@ -1,7 +1,6 @@
 import type { FormProps } from 'antd';
 import { Button, Form, Input } from 'antd';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { LOGIN_REQUEST } from '../store/constants';
 
 type FieldType = {
@@ -11,7 +10,6 @@ type FieldType = {
 
 const AuthForm = () => {
 	const dispatch = useDispatch();
-	const navigate = useHistory()
 
 	const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
 		dispatch({
@@ -55,16 +53,6 @@ const AuthForm = () => {
 			<Form.Item label={null}>
 				<Button type="primary" htmlType="submit">
 					Submit
-				</Button>
-				<Button onClick={() => {
-					navigate.push('/authors')
-				}} type="primary" htmlType="button">
-					authors
-				</Button>
-				<Button onClick={() => {
-					navigate.push('/posts')
-				}} type="primary" htmlType="button">
-					posts
 				</Button>
 			</Form.Item>
 		</Form>

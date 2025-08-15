@@ -4,6 +4,7 @@ import type { Author } from "../types/authors";
 import type { Post } from "../types/posts";
 import type { Tag } from "../types/tags";
 import Cookies from 'js-cookie';
+import { PATHS } from "../navigation/paths";
 
 export const api = axios.create({
   baseURL: 'https://rest-test.machineheads.ru',
@@ -49,6 +50,9 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         console.error('Token refresh failed:', refreshError);
+        clearTokens()
+        window.location.href = PATHS.AUTH
+        // поправить ^^^^
         return Promise.reject(error);
       }
     }
@@ -61,6 +65,12 @@ export function storeTokens(tokens: AuthTokens) {
   Cookies.set(TOKEN_KEY, tokens.access_token, { expires: 1 });
   Cookies.set(REFRESH_TOKEN_KEY, tokens.refresh_token, { expires: 7 })
   api.defaults.headers.common['Authorization'] = `Bearer ${tokens.access_token}`;
+}
+
+export function clearTokens() {
+  Cookies.remove(TOKEN_KEY);
+  Cookies.remove(REFRESH_TOKEN_KEY);
+  delete api.defaults.headers.common['Authorization'];
 }
 
 export const authAPI = {

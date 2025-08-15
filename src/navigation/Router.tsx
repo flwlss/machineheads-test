@@ -1,20 +1,22 @@
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Switch, Redirect } from 'react-router-dom';
 import { PATHS } from "./paths"
 import AuthPage from "../pages/AuthPage"
 import AuthorsPage from '../pages/AuthorsPage';
 import PostsPage from '../pages/PostsPage';
 import TagsPage from '../pages/TagsPage';
+import PrivateRoute from './PrivateRoute';
+import PublicRoute from './PublickRoute';
 
 const Router = () => {
   return (
     <Switch>
-      <Route exact path={PATHS.ROOT}>
-        <Redirect to={PATHS.AUTH} />
-      </Route>
-      <Route path={PATHS.AUTH} component={AuthPage} />
-      <Route path={PATHS.AUTHORS} component={AuthorsPage} />
-      <Route path={PATHS.POSTS} component={PostsPage} />
-      <Route path={PATHS.TAGS} component={TagsPage} />
+      <PublicRoute path={PATHS.AUTH} component={AuthPage} />
+
+      <PrivateRoute path={PATHS.AUTHORS} component={AuthorsPage} />
+      <PrivateRoute path={PATHS.POSTS} component={PostsPage} />
+      <PrivateRoute path={PATHS.TAGS} component={TagsPage} />
+
+      <Redirect to={PATHS.AUTH} />
     </Switch>
   )
 }
