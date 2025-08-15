@@ -1,5 +1,5 @@
 import { takeEvery, put, call, fork, all, select, takeLeading } from "redux-saga/effects";
-import { LOCATION_CHANGE, push } from 'connected-react-router';
+import { LOCATION_CHANGE } from 'connected-react-router';
 import { setAllPosts, setAllAuthors, setAllTags, setAuthTokens } from "../actions";
 import type { Post } from "../../types/posts";
 import type { Author } from "../../types/authors";
@@ -10,13 +10,9 @@ import { LOGIN_REQUEST } from '../constants';
 import { api, authAPI, contentAPI, storeTokens, TOKEN_KEY } from '../../api';
 import { PATHS } from "../../navigation/paths";
 
-interface AuthResponse extends AuthTokens {
-  expiresIn?: number;
-}
-
 export function* handleLogin(action: { type: string; payload: AuthCredentials }) {
   try {
-    const response: AuthResponse = yield call(authAPI.login, action.payload);
+    const response: AuthTokens = yield call(authAPI.login, action.payload);
     yield put(setAuthTokens(response));
     storeTokens(response);
     window.location.href = PATHS.AUTHORS

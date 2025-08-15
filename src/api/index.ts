@@ -11,10 +11,6 @@ export const api = axios.create({
   withCredentials: false
 });
 
-interface AuthResponse extends AuthTokens {
-  expiresIn?: number;
-}
-
 interface AuthCredentials {
   email: string;
   password: string;
@@ -38,7 +34,7 @@ api.interceptors.response.use(
         const formData = new FormData();
         formData.append('refresh_token', refresh_token);
 
-        const { data } = await axios.post<AuthResponse>(
+        const { data } = await axios.post<AuthTokens>(
           'https://rest-test.machineheads.ru/auth/token-refresh',
           formData,
         );
@@ -74,17 +70,17 @@ export function clearTokens() {
 }
 
 export const authAPI = {
-  async login(credentials: AuthCredentials): Promise<AuthResponse> {
+  async login(credentials: AuthCredentials): Promise<AuthTokens> {
     const formData = new FormData();
     formData.append('email', credentials.email);
     formData.append('password', credentials.password);
 
-    const { data } = await api.post<AuthResponse>('/auth/token-generate', formData);
+    const { data } = await api.post<AuthTokens>('/auth/token-generate', formData);
     return data;
   },
 
-  async refreshToken(refresh_token: string): Promise<AuthResponse> {
-    const { data } = await api.post<AuthResponse>('/auth/token-refresh', { refresh_token });
+  async refreshToken(refresh_token: string): Promise<AuthTokens> {
+    const { data } = await api.post<AuthTokens>('/auth/token-refresh', { refresh_token });
     return data;
   }
 };
