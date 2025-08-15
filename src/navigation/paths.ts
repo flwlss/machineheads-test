@@ -1,4 +1,7 @@
 export const PATHS = {
   ROOT: '/',
-  AUTH: '/auth'
+  AUTH: '/auth',
+  AUTHORS: '/authors',
+  POSTS: '/posts',
+  TAGS: '/tags',
 }

@@ -1,6 +1,9 @@
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { PATHS } from "./paths"
 import AuthPage from "../pages/AuthPage"
+import AuthorsPage from '../pages/AuthorsPage';
+import PostsPage from '../pages/PostsPage';
+import TagsPage from '../pages/TagsPage';
 
 const Router = () => {
   return (
@@ -9,6 +12,9 @@ const Router = () => {
         <Redirect to={PATHS.AUTH} />
       </Route>
       <Route path={PATHS.AUTH} component={AuthPage} />
+      <Route path={PATHS.AUTHORS} component={AuthorsPage} />
+      <Route path={PATHS.POSTS} component={PostsPage} />
+      <Route path={PATHS.TAGS} component={TagsPage} />
     </Switch>
   )
 }

@@ -1,11 +1,15 @@
 import { combineReducers } from "redux";
 import { createBrowserHistory } from 'history'
 import { connectRouter } from "connected-react-router";
+import content from "./content";
+
+export type RootState = ReturnType<typeof rootReducer>;
 
 export const history = createBrowserHistory()
 
-const reducer = combineReducers({
+const rootReducer = combineReducers({
+  content,
   router: connectRouter(history)
 })
 
-export default reducer
+export default rootReducer;
