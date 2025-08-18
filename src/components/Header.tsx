@@ -7,8 +7,8 @@ const HeaderNav = () => {
   const navigate = useHistory()
 
   const items = [
-    { key: PATHS.AUTHORS, label: 'Authors', onClick: () => navigate.push(PATHS.AUTHORS) },
     { key: PATHS.POSTS, label: 'Posts', onClick: () => navigate.push(PATHS.POSTS) },
+    { key: PATHS.AUTHORS, label: 'Authors', onClick: () => navigate.push(PATHS.AUTHORS) },
     { key: PATHS.TAGS, label: 'Tags', onClick: () => navigate.push(PATHS.TAGS) },
   ];
 

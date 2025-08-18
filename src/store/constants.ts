@@ -7,3 +7,7 @@ export const SET_ALL_POSTS = "SET_ALL_POSTS";
 export const SET_ALL_AUTHORS = "SET_ALL_AUTHORS";
 
 export const SET_ALL_TAGS = "SET_ALL_TAGS";
+
+export const SET_PAGINATION = "SET_PAGINATION";
+
+export const PAGE_CHANGE = "PAGE_CHANGE";

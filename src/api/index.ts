@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { AuthTokens } from "../types/auth";
+import type { AuthCredentials, AuthTokens } from "../types/auth";
 import type { Author } from "../types/authors";
 import type { Post } from "../types/posts";
 import type { Tag } from "../types/tags";
@@ -11,9 +11,11 @@ export const api = axios.create({
   withCredentials: false
 });
 
-interface AuthCredentials {
-  email: string;
-  password: string;
+export interface PaginationMeta {
+  currentPage: number;
+  pageCount: number;
+  perPage: number;
+  totalCount: number;
 }
 
 export const TOKEN_KEY = 'auth_token';
@@ -86,13 +88,23 @@ export const authAPI = {
 };
 
 export const contentAPI = {
-  async getAuthors(): Promise<Author[]> {
-    const { data } = await api.get('/manage/authors');
-    return data;
+  async getPosts(page = 1): Promise<{ data: Post[]; pagination: PaginationMeta }> {
+    const response = await api.get('/manage/posts', {
+      params: { page }
+    });
+    return {
+      data: response.data,
+      pagination: {
+        currentPage: parseInt(response.headers['x-pagination-current-page']),
+        pageCount: parseInt(response.headers['x-pagination-page-count']),
+        perPage: parseInt(response.headers['x-pagination-per-page']),
+        totalCount: parseInt(response.headers['x-pagination-total-count'])
+      }
+    };
   },
 
-  async getPosts(): Promise<Post[]> {
-    const { data } = await api.get('/manage/posts');
+  async getAuthors(): Promise<Author[]> {
+    const { data } = await api.get('/manage/authors');
     return data;
   },
 

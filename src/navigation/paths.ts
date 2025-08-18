@@ -1,7 +1,7 @@
 export const PATHS = {
   ROOT: '/',
   AUTH: '/auth',
-  AUTHORS: '/authors',
   POSTS: '/posts',
+  AUTHORS: '/authors',
   TAGS: '/tags',
 }

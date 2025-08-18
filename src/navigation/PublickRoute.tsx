@@ -1,6 +1,7 @@
 import { Route, Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { TOKEN_KEY } from '../api';
+import { PATHS } from './paths';
 
 interface PublicRouteProps {
   component: React.ComponentType<any>;
@@ -18,7 +19,7 @@ const PublicRoute = ({ component: Component }: PublicRouteProps) => {
         ) : (
           <Redirect
             to={{
-              pathname: '/authors',
+              pathname: PATHS.POSTS,
               state: { from: props.location }
             }}
           />

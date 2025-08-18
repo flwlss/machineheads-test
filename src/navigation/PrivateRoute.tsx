@@ -1,6 +1,7 @@
 import { Route, Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { TOKEN_KEY } from '../api';
+import { PATHS } from './paths';
 
 interface PrivateRouteProps {
   component: React.ComponentType<any>;
@@ -18,7 +19,7 @@ const PrivateRoute = ({ component: Component }: PrivateRouteProps) => {
         ) : (
           <Redirect
             to={{
-              pathname: '/auth',
+              pathname: PATHS.AUTH,
               state: { from: props.location }
             }}
           />

@@ -49,16 +49,16 @@ body {
 }
 
 .container {
-  padding: 20px 0 50px 50px
+  padding: 20px 50px 50px;
 }
 
-.authors {
+.content {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 15px;
 }
 
-.authors img {
+.content img {
   height: 200px;
   object-fit: cover;
 }

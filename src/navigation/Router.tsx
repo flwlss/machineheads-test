@@ -12,8 +12,8 @@ const Router = () => {
     <Switch>
       <PublicRoute path={PATHS.AUTH} component={AuthPage} />
 
-      <PrivateRoute path={PATHS.AUTHORS} component={AuthorsPage} />
       <PrivateRoute path={PATHS.POSTS} component={PostsPage} />
+      <PrivateRoute path={PATHS.AUTHORS} component={AuthorsPage} />
       <PrivateRoute path={PATHS.TAGS} component={TagsPage} />
 
       <Redirect to={PATHS.AUTH} />
