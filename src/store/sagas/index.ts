@@ -1,10 +1,10 @@
 import { takeEvery, put, call, fork, all, select, takeLeading } from "redux-saga/effects";
 import { LOCATION_CHANGE } from 'connected-react-router';
-import { setAllPosts, setAllAuthors, setAllTags, setAuthTokens, setPagination } from "../actions";
+import { setAllPosts, setAllAuthors, setAllTags, setAuthTokens, setPagination, setAuthError } from "../actions";
 import type { Author } from "../../types/authors";
 import type { Tag } from "../../types/tags";
 import Cookies from 'js-cookie';
-import type { AuthCredentials, AuthTokens } from '../../types/auth';
+import type { AuthCredentials, AuthError, AuthTokens } from '../../types/auth';
 import { LOGIN_REQUEST, PAGE_CHANGE } from '../constants';
 import { api, authAPI, contentAPI, storeTokens, TOKEN_KEY } from '../../api';
 import { PATHS } from "../../navigation/paths";
@@ -13,11 +13,14 @@ export function* handleLogin(action: { type: string; payload: AuthCredentials })
   try {
     const response: AuthTokens = yield call(authAPI.login, action.payload);
     yield put(setAuthTokens(response));
+    yield put(setAuthError(null));
     storeTokens(response);
     window.location.href = PATHS.POSTS
     // поправить ^^^^
   } catch (error) {
     console.error('Login failed:', error);
+    const message = error as AuthError;
+    yield put(setAuthError(message.response.data.message));
   }
 }
 

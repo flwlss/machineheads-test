@@ -9,3 +9,11 @@ export type AuthTokens = {
   access_expired_at: number;
   refresh_expired_at: number;
 }
+
+export interface AuthError {
+  response: {
+    data: {
+      message: string;
+    };
+  };
+}

@@ -3,12 +3,17 @@ import type { AuthTokens } from "../../types/auth";
 import type { Author } from "../../types/authors";
 import type { Post } from "../../types/posts";
 import type { Tag } from "../../types/tags";
-import { SET_ALL_AUTHORS, SET_ALL_POSTS, SET_ALL_TAGS, SET_AUTH_TOKENS, SET_PAGINATION } from "../constants";
+import { SET_ALL_AUTHORS, SET_ALL_POSTS, SET_ALL_TAGS, SET_AUTH_ERROR, SET_AUTH_TOKENS, SET_PAGINATION } from "../constants";
 
 export const setAuthTokens = (tokens: AuthTokens) => ({
   type: SET_AUTH_TOKENS,
   payload: tokens
 })
+
+export const setAuthError = (error: string | null) => ({
+  type: SET_AUTH_ERROR,
+  payload: error
+});
 
 export const setAllPosts = (payload: Post[]) => ({
   type: SET_ALL_POSTS,

@@ -1,7 +1,8 @@
 import type { FormProps } from 'antd';
-import { Button, Form, Input } from 'antd';
-import { useDispatch } from 'react-redux';
+import { Button, Form, Input, Typography } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
 import { LOGIN_REQUEST } from '../store/constants';
+import type { RootState } from '../store/reducers';
 
 type FieldType = {
 	email?: string;
@@ -10,6 +11,7 @@ type FieldType = {
 
 const AuthForm = () => {
 	const dispatch = useDispatch();
+	const authError = useSelector((state: RootState) => state.error.authError);
 
 	const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
 		dispatch({
@@ -21,23 +23,18 @@ const AuthForm = () => {
 		});
 	};
 
-	const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-		console.log('Failed:', errorInfo);
-	};
-
 	return (
 		<Form
 			name="basic"
 			labelCol={{ span: 8 }}
 			initialValues={{ remember: true }}
 			onFinish={onFinish}
-			onFinishFailed={onFinishFailed}
 			autoComplete="off"
 		>
 			<Form.Item<FieldType>
 				label="Email"
 				name="email"
-				rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
+				rules={[{ required: true, message: 'Please input your email!', type: 'email', validateTrigger: 'onSubmit' }]}
 			>
 				<Input />
 			</Form.Item>
@@ -49,6 +46,8 @@ const AuthForm = () => {
 			>
 				<Input.Password />
 			</Form.Item>
+
+			{authError && <Typography.Text className='authErrorMessage' type='danger'>{authError}</Typography.Text>}
 
 			<Form.Item label={null}>
 				<Button type="primary" htmlType="submit">
