@@ -3,7 +3,16 @@ import type { AuthTokens } from "../../types/auth";
 import type { Author } from "../../types/authors";
 import type { Post } from "../../types/posts";
 import type { Tag } from "../../types/tags";
-import { SET_ALL_AUTHORS, SET_ALL_POSTS, SET_ALL_TAGS, SET_AUTH_ERROR, SET_AUTH_TOKENS, SET_PAGINATION } from "../constants";
+import {
+  CREATE_POST_REQUEST,
+  DELETE_POST_REQUEST,
+  SET_ALL_AUTHORS,
+  SET_ALL_POSTS,
+  SET_ALL_TAGS,
+  SET_AUTH_ERROR,
+  SET_AUTH_TOKENS,
+  SET_PAGINATION
+} from "../constants";
 
 export const setAuthTokens = (tokens: AuthTokens) => ({
   type: SET_AUTH_TOKENS,
@@ -18,6 +27,16 @@ export const setAuthError = (error: string | null) => ({
 export const setAllPosts = (payload: Post[]) => ({
   type: SET_ALL_POSTS,
   payload
+});
+
+export const createPostRequest = (postData: FormData) => ({
+  type: CREATE_POST_REQUEST,
+  payload: postData
+});
+
+export const deletePostRequest = (id: number) => ({
+  type: DELETE_POST_REQUEST,
+  payload: id
 });
 
 export const setAllAuthors = (payload: Author[]) => ({

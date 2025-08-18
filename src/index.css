@@ -63,6 +63,10 @@ body {
   object-fit: cover;
 }
 
+.content button {
+  margin-top: 15px;
+}
+
 .authErrorMessage {
   display: block;
   margin-bottom: 15px;

@@ -50,7 +50,6 @@ api.interceptors.response.use(
         console.error('Token refresh failed:', refreshError);
         clearTokens()
         window.location.href = PATHS.AUTH
-        // поправить ^^^^
         return Promise.reject(error);
       }
     }
@@ -101,6 +100,18 @@ export const contentAPI = {
         totalCount: parseInt(response.headers['x-pagination-total-count'])
       }
     };
+  },
+
+  async addPost(formData: FormData): Promise<Post> {
+    const { data } = await api.post('/manage/posts/add', formData)
+    return data;
+  },
+
+  async deletePost(id: number): Promise<Post> {
+    const { data } = await api.delete('/manage/posts/remove', {
+      params: { id }
+    })
+    return data;
   },
 
   async getAuthors(): Promise<Author[]> {

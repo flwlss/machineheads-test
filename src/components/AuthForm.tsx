@@ -5,8 +5,8 @@ import { LOGIN_REQUEST } from '../store/constants';
 import type { RootState } from '../store/reducers';
 
 type FieldType = {
-	email?: string;
-	password?: string;
+	email: string;
+	password: string;
 };
 
 const AuthForm = () => {
