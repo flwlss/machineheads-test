@@ -103,8 +103,15 @@ export const contentAPI = {
   },
 
   async addPost(formData: FormData): Promise<Post> {
-    const { data } = await api.post('/manage/posts/add', formData)
-    return data;
+    try {
+      const { data } = await api.post('/manage/posts/add', formData);
+      return data;
+    } catch (error: any) {
+      if (error.response?.data) {
+        throw error.response.data;
+      }
+      throw error;
+    }
   },
 
   async deletePost(id: number): Promise<Post> {
@@ -122,10 +129,17 @@ export const contentAPI = {
   },
 
   async editPost(id: number, formData: FormData): Promise<Post> {
-    const { data } = await api.post('/manage/posts/edit', formData, {
-      params: { id }
-    })
-    return data;
+    try {
+      const { data } = await api.post('/manage/posts/edit', formData, {
+        params: { id }
+      });
+      return data;
+    } catch (error: any) {
+      if (error.response?.data) {
+        throw error.response.data;
+      }
+      throw error;
+    }
   },
 
   async getAuthors(): Promise<Author[]> {

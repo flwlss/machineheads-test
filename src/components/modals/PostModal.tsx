@@ -1,7 +1,7 @@
 import { Button, Form, Input, Modal, Select, Upload, type FormProps } from "antd"
 import { PlusOutlined } from '@ant-design/icons';
 import { useEffect, useMemo, useState } from "react";
-import { SET_ALL_AUTHORS_TO_SELECT, SET_ALL_TAGS_TO_SELECT } from "../../store/constants";
+import { SET_ALL_AUTHORS_TO_SELECT, SET_ALL_TAGS_TO_SELECT, SET_POST_VALIDATION_ERRORS } from "../../store/constants";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/reducers";
 import type { UploadChangeParam } from "antd/es/upload";
@@ -27,6 +27,7 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
   const dispatch = useDispatch();
   const allTags = useSelector((state: RootState) => state.content.allTags)
   const allAuthors = useSelector((state: RootState) => state.content.allAuthors)
+  const validationErrors = useSelector((state: RootState) => state.error.postErrors);
   const [form] = Form.useForm();
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -56,7 +57,10 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
     }
 
     post ? dispatch(editPostRequest(post.id, formData)) : dispatch(createPostRequest(formData));
-    setOpen()
+  };
+
+  const getFieldError = (fieldName: string): string | undefined => {
+    return validationErrors?.find(error => error.field === fieldName)?.message;
   };
 
   const handleFileChange = (info: UploadChangeParam) => {
@@ -73,6 +77,7 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
     setOpen()
     form.resetFields()
     setFile(null);
+    dispatch({ type: SET_POST_VALIDATION_ERRORS, payload: null })
   };
 
   useEffect(() => {
@@ -132,6 +137,8 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
           label="Code"
           name="code"
           rules={[{ required: true, message: 'Please input your code!' }]}
+          help={getFieldError('code')}
+          validateStatus={getFieldError('code') ? 'error' : ''}
         >
           <Input />
         </Form.Item>
@@ -140,6 +147,8 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
           label="Title"
           name="title"
           rules={[{ required: true, message: 'Please input your title!' }]}
+          help={getFieldError('title')}
+          validateStatus={getFieldError('title') ? 'error' : ''}
         >
           <Input />
         </Form.Item>
@@ -147,12 +156,16 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
           label="AuthorId"
           name="authorId"
           rules={[{ required: true, message: 'Please input your authorId!' }]}
+          help={getFieldError('authorId')}
+          validateStatus={getFieldError('authorId') ? 'error' : ''}
         >
           <Select options={authorOptions} />
         </Form.Item>
         <Form.Item<FieldType>
           label="TagIds"
           name="tagIds"
+          help={getFieldError('tagIds')}
+          validateStatus={getFieldError('tagIds') ? 'error' : ''}
         >
           <Select mode="multiple" options={tagOptions} />
         </Form.Item>
@@ -160,6 +173,8 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
           label="Text"
           name="text"
           rules={[{ required: true, message: 'Please input your text!' }]}
+          help={getFieldError('text')}
+          validateStatus={getFieldError('text') ? 'error' : ''}
         >
           <Input />
         </Form.Item>
@@ -169,6 +184,8 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
           valuePropName="fileList"
           getValueFromEvent={e => e && e.fileList}
           rules={[{ required: post ? false : true, message: 'Please upload an image!' }]}
+          help={getFieldError('previewPicture')}
+          validateStatus={getFieldError('previewPicture') ? 'error' : ''}
         >
           <Upload
             name="previewPicture"

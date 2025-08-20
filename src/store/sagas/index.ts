@@ -13,7 +13,8 @@ import {
   PAGE_CHANGE,
   SET_ALL_AUTHORS_TO_SELECT,
   SET_ALL_TAGS_TO_SELECT,
-  SET_DETAIL_POST_REQUEST
+  SET_DETAIL_POST_REQUEST,
+  SET_POST_VALIDATION_ERRORS
 } from '../constants';
 import { api, authAPI, contentAPI, storeTokens, TOKEN_KEY } from '../../api';
 import { PATHS } from "../../navigation/paths";
@@ -51,12 +52,23 @@ export function* handleAllPosts(action?: { payload: { page: number } }) {
 export function* handleCreatePost(action: { type: string; payload: FormData }) {
   try {
     yield call(contentAPI.addPost, action.payload);
+    const currentPage: number = yield select(
+      (state) => state.pagination.posts?.currentPage || 1
+    );
     yield put({
       type: PAGE_CHANGE,
-      payload: { page: 1 }
+      payload: { page: currentPage }
+    });
+    yield put({
+      type: SET_POST_VALIDATION_ERRORS,
+      payload: null
     });
   } catch (error) {
     console.error('Failed to create post:', error);
+    yield put({
+      type: SET_POST_VALIDATION_ERRORS,
+      payload: error
+    });
   }
 }
 
@@ -94,7 +106,15 @@ export function* handleEditPost(action: { type: string; payload: FormData, id: n
       type: PAGE_CHANGE,
       payload: { page: currentPage }
     });
+    yield put({
+      type: SET_POST_VALIDATION_ERRORS,
+      payload: null
+    });
   } catch (error) {
+    yield put({
+      type: SET_POST_VALIDATION_ERRORS,
+      payload: error
+    });
     console.error('Failed to edit post:', error);
   }
 }

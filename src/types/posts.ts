@@ -42,3 +42,8 @@ export type DetailPost = {
   updatedAt: string,
   createdAt: string
 }
+
+export interface ValidationError {
+  field: string;
+  message: string;
+}
