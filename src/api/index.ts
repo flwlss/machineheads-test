@@ -1,8 +1,5 @@
 import axios from "axios";
 import type { AuthCredentials, AuthTokens } from "../types/auth";
-import type { Author, DetailAuthor } from "../types/authors";
-import type { DetailPost, Post } from "../types/posts";
-import type { Tag } from "../types/tags";
 import Cookies from 'js-cookie';
 import { PATHS } from "../navigation/paths";
 
@@ -82,113 +79,6 @@ export const authAPI = {
 
   async refreshToken(refresh_token: string): Promise<AuthTokens> {
     const { data } = await api.post<AuthTokens>('/auth/token-refresh', { refresh_token });
-    return data;
-  }
-};
-
-export const contentAPI = {
-  async getPosts(page = 1): Promise<{ data: Post[]; pagination: PaginationMeta }> {
-    const response = await api.get('/manage/posts', {
-      params: { page }
-    });
-    return {
-      data: response.data,
-      pagination: {
-        currentPage: parseInt(response.headers['x-pagination-current-page']),
-        pageCount: parseInt(response.headers['x-pagination-page-count']),
-        perPage: parseInt(response.headers['x-pagination-per-page']),
-        totalCount: parseInt(response.headers['x-pagination-total-count'])
-      }
-    };
-  },
-
-  async addPost(formData: FormData): Promise<Post> {
-    try {
-      const { data } = await api.post('/manage/posts/add', formData);
-      return data;
-    } catch (error: any) {
-      if (error.response?.data) {
-        throw error.response.data;
-      }
-      throw error;
-    }
-  },
-
-  async deletePost(id: number): Promise<Post> {
-    const { data } = await api.delete('/manage/posts/remove', {
-      params: { id }
-    })
-    return data;
-  },
-
-  async getDetailPost(id: number): Promise<DetailPost> {
-    const { data } = await api.get('/manage/posts/detail', {
-      params: { id }
-    })
-    return data;
-  },
-
-  async editPost(id: number, formData: FormData): Promise<Post> {
-    try {
-      const { data } = await api.post('/manage/posts/edit', formData, {
-        params: { id }
-      });
-      return data;
-    } catch (error: any) {
-      if (error.response?.data) {
-        throw error.response.data;
-      }
-      throw error;
-    }
-  },
-
-  async getAuthors(): Promise<Author[]> {
-    const { data } = await api.get('/manage/authors');
-    return data;
-  },
-
-  async addAuthor(formData: FormData): Promise<Author> {
-    try {
-      const { data } = await api.post('/manage/authors/add', formData);
-      return data;
-    } catch (error: any) {
-      if (error.response?.data) {
-        throw error.response.data;
-      }
-      throw error;
-    }
-  },
-
-  async getDetailAuthor(id: number): Promise<DetailAuthor> {
-    const { data } = await api.get('/manage/authors/detail', {
-      params: { id }
-    })
-    return data;
-  },
-
-  async editAuthor(id: number, formData: FormData): Promise<Author> {
-    try {
-      const { data } = await api.post('/manage/authors/edit', formData, {
-        params: { id }
-      });
-      return data;
-    } catch (error: any) {
-      if (error.response?.data) {
-        throw error.response.data;
-      }
-      throw error;
-    }
-  },
-
-  async deleteAuthor(id: number): Promise<Author> {
-    const { data } = await api.delete('/manage/authors/remove', {
-      params: { id }
-    })
-    return data;
-  },
-
-  async getTags(): Promise<Tag[]> {
-    const { data } = await api.get('/manage/tags');
     return data;
   }
 };

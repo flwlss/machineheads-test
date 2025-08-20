@@ -1,5 +1,5 @@
 import { takeEvery, put, call, fork, all, select, takeLeading } from "redux-saga/effects";
-import { LOCATION_CHANGE } from 'connected-react-router';
+import { LOCATION_CHANGE, push } from 'connected-react-router';
 import { setAuthTokens, setPagination, setAuthError } from "../actions";
 import type { Author, DetailAuthor } from "../../types/authors";
 import type { Tag } from "../../types/tags";
@@ -21,12 +21,15 @@ import {
   SET_DETAIL_POST_REQUEST,
   SET_POST_VALIDATION_ERRORS
 } from '../constants';
-import { api, authAPI, contentAPI, storeTokens, TOKEN_KEY } from '../../api';
+import { api, authAPI, storeTokens, TOKEN_KEY } from '../../api';
 import { PATHS } from "../../navigation/paths";
 import type { DetailPost } from "../../types/posts";
 import { setAllPosts, setDetailPost } from "../actions/post";
 import { setAllAuthors, setDetailAuthor } from "../actions/author";
 import { setAllTags } from "../actions/tag";
+import { postApi } from "../../api/post";
+import { authorApi } from "../../api/author";
+import { tagApi } from "../../api/tag";
 
 export function* handleLogin(action: { type: string; payload: AuthCredentials }) {
   try {
@@ -34,8 +37,7 @@ export function* handleLogin(action: { type: string; payload: AuthCredentials })
     yield put(setAuthTokens(response));
     yield put(setAuthError(null));
     storeTokens(response);
-    window.location.href = PATHS.POSTS
-    // поправить ^^^^
+    yield put(push(PATHS.POSTS));
   } catch (error) {
     console.error('Login failed:', error);
     const message = error as AuthError;
@@ -46,7 +48,7 @@ export function* handleLogin(action: { type: string; payload: AuthCredentials })
 export function* handleAllPosts(action?: { payload: { page: number } }) {
   try {
     const page = action?.payload?.page || 1;
-    const { data: posts, pagination } = yield call(contentAPI.getPosts, page);
+    const { data: posts, pagination } = yield call(postApi.getPosts, page);
     yield put(setAllPosts(posts));
     yield put(setPagination(pagination));
   } catch (error) {
@@ -56,7 +58,7 @@ export function* handleAllPosts(action?: { payload: { page: number } }) {
 
 export function* handleCreatePost(action: { type: string; payload: FormData }) {
   try {
-    yield call(contentAPI.addPost, action.payload);
+    yield call(postApi.addPost, action.payload);
     const currentPage: number = yield select(
       (state) => state.pagination.posts?.currentPage || 1
     );
@@ -79,7 +81,7 @@ export function* handleCreatePost(action: { type: string; payload: FormData }) {
 
 export function* handleDeletePost(action: { type: string; payload: number }) {
   try {
-    yield call(contentAPI.deletePost, action.payload);
+    yield call(postApi.deletePost, action.payload);
     const currentPage: number = yield select(
       (state) => state.pagination.posts?.currentPage || 1
     );
@@ -94,7 +96,7 @@ export function* handleDeletePost(action: { type: string; payload: number }) {
 
 export function* handleDetailPost(action: { type: string; payload: number }) {
   try {
-    const detailPost: DetailPost = yield call(contentAPI.getDetailPost, action.payload);
+    const detailPost: DetailPost = yield call(postApi.getDetailPost, action.payload);
     yield put(setDetailPost(detailPost));
   } catch (error) {
     console.error('Failed to get detail post:', error);
@@ -103,7 +105,7 @@ export function* handleDetailPost(action: { type: string; payload: number }) {
 
 export function* handleEditPost(action: { type: string; payload: FormData, id: number }) {
   try {
-    yield call(contentAPI.editPost, action.id, action.payload);
+    yield call(postApi.editPost, action.id, action.payload);
     const currentPage: number = yield select(
       (state) => state.pagination.posts?.currentPage || 1
     );
@@ -146,7 +148,7 @@ export function* watchPageChange() {
 
 export function* handleAllAuthors() {
   try {
-    const authors: Author[] = yield call(contentAPI.getAuthors);
+    const authors: Author[] = yield call(authorApi.getAuthors);
     yield put(setAllAuthors(authors));
   } catch (error) {
     console.error('Failed to fetch authors:', error);
@@ -155,7 +157,7 @@ export function* handleAllAuthors() {
 
 export function* handleCreateAuthor(action: { type: string; payload: FormData }) {
   try {
-    yield call(contentAPI.addAuthor, action.payload);
+    yield call(authorApi.addAuthor, action.payload);
     yield put({
       type: SET_AUTHOR_VALIDATION_ERRORS,
       payload: null
@@ -172,7 +174,7 @@ export function* handleCreateAuthor(action: { type: string; payload: FormData })
 
 export function* handleEditAuthor(action: { type: string; payload: FormData, id: number }) {
   try {
-    yield call(contentAPI.editAuthor, action.id, action.payload);
+    yield call(authorApi.editAuthor, action.id, action.payload);
     yield put({
       type: SET_AUTHOR_VALIDATION_ERRORS,
       payload: null
@@ -189,7 +191,7 @@ export function* handleEditAuthor(action: { type: string; payload: FormData, id:
 
 export function* handleDetailAuthor(action: { type: string; payload: number }) {
   try {
-    const detailAuthor: DetailAuthor = yield call(contentAPI.getDetailAuthor, action.payload);
+    const detailAuthor: DetailAuthor = yield call(authorApi.getDetailAuthor, action.payload);
     yield put(setDetailAuthor(detailAuthor));
   } catch (error) {
     console.error('Failed to get detail author:', error);
@@ -198,7 +200,7 @@ export function* handleDetailAuthor(action: { type: string; payload: number }) {
 
 export function* handleDeleteAuthor(action: { type: string; payload: number }) {
   try {
-    yield call(contentAPI.deleteAuthor, action.payload);
+    yield call(authorApi.deleteAuthor, action.payload);
     yield call(handleAllAuthors);
   } catch (error) {
     console.error('Failed to delete post:', error);
@@ -223,7 +225,7 @@ export function* watchDeleteAuthor() {
 
 export function* handleAllTags() {
   try {
-    const tags: Tag[] = yield call(contentAPI.getTags);
+    const tags: Tag[] = yield call(tagApi.getTags);
     yield put(setAllTags(tags));
   } catch (error) {
     console.error('Failed to fetch tags:', error);

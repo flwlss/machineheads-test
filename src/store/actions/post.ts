@@ -18,11 +18,6 @@ export const createPostRequest = (postData: FormData) => ({
   payload: postData
 });
 
-export const deletePostRequest = (id: number) => ({
-  type: DELETE_POST_REQUEST,
-  payload: id
-});
-
 export const setDetailPostRequest = (id: number) => ({
   type: SET_DETAIL_POST_REQUEST,
   payload: id
@@ -37,4 +32,9 @@ export const editPostRequest = (id: number, postData: FormData) => ({
   type: EDIT_POST_REQUEST,
   id: id,
   payload: postData
+});
+
+export const deletePostRequest = (id: number) => ({
+  type: DELETE_POST_REQUEST,
+  payload: id
 });
