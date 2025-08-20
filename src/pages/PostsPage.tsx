@@ -6,20 +6,30 @@ import { Button, Card, Modal } from "antd";
 import NotFoundMessage from "../components/NotFoundMessage";
 import { PAGE_CHANGE } from "../store/constants";
 import PostModal from "../components/modals/PostModal";
-import { useState } from "react";
-import { deletePostRequest } from "../store/actions";
+import { useEffect, useState } from "react";
+import { EditOutlined } from "@ant-design/icons";
+import { setDetailPostRequest, deletePostRequest } from "../store/actions/post";
 
 const PostsPage = () => {
   const dispatch = useDispatch();
   const allPosts = useSelector((state: RootState) => state.content.allPosts);
   const pagination = useSelector((state: RootState) => state.pagination);
+  const detailPost = useSelector((state: RootState) => state.content.detailPost)
   const [isOpenedCreateModal, setIsOpenedCreateModal] = useState(false);
+  const [isOpenedEditModal, setIsOpenedEditModal] = useState(false);
   const [isOpenedDeleteModal, setIsOpenedDeleteModal] = useState(false);
-  const [postForDelete, setPostForDelete] = useState<number | null>(null);
+  const [postForDeleteId, setPostForDeleteId] = useState<number | null>(null);
+  const [postForEditId, setPostForEditId] = useState<number | null>(null);
 
   const handlePageChange = (page: number) => {
     dispatch({ type: PAGE_CHANGE, payload: { page } });
   };
+
+  useEffect(() => {
+    if (postForEditId) {
+      dispatch(setDetailPostRequest(postForEditId))
+    }
+  }, [postForEditId])
 
   return (
     <PageContainer
@@ -29,11 +39,18 @@ const PostsPage = () => {
         <PostModal
           isOpened={isOpenedCreateModal}
           setOpen={() => { setIsOpenedCreateModal(prev => !prev) }} />
+        {detailPost && <PostModal
+          post={detailPost}
+          isOpened={isOpenedEditModal}
+          setOpen={() => {
+            setIsOpenedEditModal(prev => !prev)
+            setPostForEditId(null)
+          }} />}
         <Modal
           title="Удалить пост?"
           open={isOpenedDeleteModal}
           onOk={() => {
-            postForDelete && dispatch(deletePostRequest(postForDelete));
+            postForDeleteId && dispatch(deletePostRequest(postForDeleteId));
             setIsOpenedDeleteModal(prev => !prev)
           }}
           onCancel={() => { setIsOpenedDeleteModal(prev => !prev) }} />
@@ -53,10 +70,18 @@ const PostsPage = () => {
                 cover={<img src={item.previewPicture.url} alt="example" />}
               >
                 <Meta title={item.title} description={`Автор: ${item.authorName ?? '-'}`} />
-                <Button onClick={() => {
-                  setIsOpenedDeleteModal(prev => !prev)
-                  setPostForDelete(item.id)
-                }} danger>Удалить</Button>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Button icon={<EditOutlined />}
+                    onClick={() => {
+                      setIsOpenedEditModal(prev => !prev)
+                      setPostForEditId(item.id)
+                    }} />
+                  <Button
+                    onClick={() => {
+                      setIsOpenedDeleteModal(prev => !prev)
+                      setPostForDeleteId(item.id)
+                    }} danger>Удалить</Button>
+                </div>
               </Card>
             )
           }) : <NotFoundMessage />}

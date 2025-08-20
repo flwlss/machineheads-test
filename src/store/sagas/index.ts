@@ -1,6 +1,6 @@
 import { takeEvery, put, call, fork, all, select, takeLeading } from "redux-saga/effects";
 import { LOCATION_CHANGE } from 'connected-react-router';
-import { setAllPosts, setAllAuthors, setAllTags, setAuthTokens, setPagination, setAuthError } from "../actions";
+import { setAuthTokens, setPagination, setAuthError } from "../actions";
 import type { Author } from "../../types/authors";
 import type { Tag } from "../../types/tags";
 import Cookies from 'js-cookie';
@@ -8,14 +8,19 @@ import type { AuthCredentials, AuthError, AuthTokens } from '../../types/auth';
 import {
   CREATE_POST_REQUEST,
   DELETE_POST_REQUEST,
+  EDIT_POST_REQUEST,
   LOGIN_REQUEST,
   PAGE_CHANGE,
   SET_ALL_AUTHORS_TO_SELECT,
-  SET_ALL_TAGS_TO_SELECT
+  SET_ALL_TAGS_TO_SELECT,
+  SET_DETAIL_POST_REQUEST
 } from '../constants';
 import { api, authAPI, contentAPI, storeTokens, TOKEN_KEY } from '../../api';
 import { PATHS } from "../../navigation/paths";
-// import type { Post } from "../../types/posts";
+import type { DetailPost } from "../../types/posts";
+import { setAllPosts, setDetailPost } from "../actions/post";
+import { setAllAuthors } from "../actions/author";
+import { setAllTags } from "../actions/tag";
 
 export function* handleLogin(action: { type: string; payload: AuthCredentials }) {
   try {
@@ -58,12 +63,39 @@ export function* handleCreatePost(action: { type: string; payload: FormData }) {
 export function* handleDeletePost(action: { type: string; payload: number }) {
   try {
     yield call(contentAPI.deletePost, action.payload);
+    const currentPage: number = yield select(
+      (state) => state.pagination.posts?.currentPage || 1
+    );
     yield put({
       type: PAGE_CHANGE,
-      payload: { page: 1 }
+      payload: { page: currentPage }
     });
   } catch (error) {
     console.error('Failed to delete post:', error);
+  }
+}
+
+export function* handleDetailPost(action: { type: string; payload: number }) {
+  try {
+    const detailPost: DetailPost = yield call(contentAPI.getDetailPost, action.payload);
+    yield put(setDetailPost(detailPost));
+  } catch (error) {
+    console.error('Failed to get detail post:', error);
+  }
+}
+
+export function* handleEditPost(action: { type: string; payload: FormData, id: number }) {
+  try {
+    yield call(contentAPI.editPost, action.id, action.payload);
+    const currentPage: number = yield select(
+      (state) => state.pagination.posts?.currentPage || 1
+    );
+    yield put({
+      type: PAGE_CHANGE,
+      payload: { page: currentPage }
+    });
+  } catch (error) {
+    console.error('Failed to edit post:', error);
   }
 }
 
@@ -73,6 +105,14 @@ export function* watchCreatePost() {
 
 export function* watchDeletePost() {
   yield takeEvery(DELETE_POST_REQUEST, handleDeletePost);
+}
+
+export function* watchDetailPost() {
+  yield takeEvery(SET_DETAIL_POST_REQUEST, handleDetailPost);
+}
+
+export function* watchEditPost() {
+  yield takeEvery(EDIT_POST_REQUEST, handleEditPost);
 }
 
 export function* watchPageChange() {
@@ -137,5 +177,7 @@ export default function* rootSaga() {
     fork(watchAuthorsSelect),
     fork(watchCreatePost),
     fork(watchDeletePost),
+    fork(watchDetailPost),
+    fork(watchEditPost),
   ]);
 }

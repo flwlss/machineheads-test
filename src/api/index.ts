@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { AuthCredentials, AuthTokens } from "../types/auth";
 import type { Author } from "../types/authors";
-import type { Post } from "../types/posts";
+import type { DetailPost, Post } from "../types/posts";
 import type { Tag } from "../types/tags";
 import Cookies from 'js-cookie';
 import { PATHS } from "../navigation/paths";
@@ -109,6 +109,20 @@ export const contentAPI = {
 
   async deletePost(id: number): Promise<Post> {
     const { data } = await api.delete('/manage/posts/remove', {
+      params: { id }
+    })
+    return data;
+  },
+
+  async getDetailPost(id: number): Promise<DetailPost> {
+    const { data } = await api.get('/manage/posts/detail', {
+      params: { id }
+    })
+    return data;
+  },
+
+  async editPost(id: number, formData: FormData): Promise<Post> {
+    const { data } = await api.post('/manage/posts/edit', formData, {
       params: { id }
     })
     return data;
