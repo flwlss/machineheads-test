@@ -1,18 +1,23 @@
 import { takeEvery, put, call, fork, all, select, takeLeading } from "redux-saga/effects";
 import { LOCATION_CHANGE } from 'connected-react-router';
 import { setAuthTokens, setPagination, setAuthError } from "../actions";
-import type { Author } from "../../types/authors";
+import type { Author, DetailAuthor } from "../../types/authors";
 import type { Tag } from "../../types/tags";
 import Cookies from 'js-cookie';
 import type { AuthCredentials, AuthError, AuthTokens } from '../../types/auth';
 import {
+  CREATE_AUTHOR_REQUEST,
   CREATE_POST_REQUEST,
+  DELETE_AUTHOR_REQUEST,
   DELETE_POST_REQUEST,
+  EDIT_AUTHOR_REQUEST,
   EDIT_POST_REQUEST,
   LOGIN_REQUEST,
   PAGE_CHANGE,
   SET_ALL_AUTHORS_TO_SELECT,
   SET_ALL_TAGS_TO_SELECT,
+  SET_AUTHOR_VALIDATION_ERRORS,
+  SET_DETAIL_AUTHOR_REQUEST,
   SET_DETAIL_POST_REQUEST,
   SET_POST_VALIDATION_ERRORS
 } from '../constants';
@@ -20,7 +25,7 @@ import { api, authAPI, contentAPI, storeTokens, TOKEN_KEY } from '../../api';
 import { PATHS } from "../../navigation/paths";
 import type { DetailPost } from "../../types/posts";
 import { setAllPosts, setDetailPost } from "../actions/post";
-import { setAllAuthors } from "../actions/author";
+import { setAllAuthors, setDetailAuthor } from "../actions/author";
 import { setAllTags } from "../actions/tag";
 
 export function* handleLogin(action: { type: string; payload: AuthCredentials }) {
@@ -148,6 +153,74 @@ export function* handleAllAuthors() {
   }
 }
 
+export function* handleCreateAuthor(action: { type: string; payload: FormData }) {
+  try {
+    yield call(contentAPI.addAuthor, action.payload);
+    yield put({
+      type: SET_AUTHOR_VALIDATION_ERRORS,
+      payload: null
+    });
+    yield call(handleAllAuthors);
+  } catch (error) {
+    console.error('Failed to create author:', error);
+    yield put({
+      type: SET_AUTHOR_VALIDATION_ERRORS,
+      payload: error
+    });
+  }
+}
+
+export function* handleEditAuthor(action: { type: string; payload: FormData, id: number }) {
+  try {
+    yield call(contentAPI.editAuthor, action.id, action.payload);
+    yield put({
+      type: SET_AUTHOR_VALIDATION_ERRORS,
+      payload: null
+    });
+    yield call(handleAllAuthors);
+  } catch (error) {
+    yield put({
+      type: SET_AUTHOR_VALIDATION_ERRORS,
+      payload: error
+    });
+    console.error('Failed to edit author:', error);
+  }
+}
+
+export function* handleDetailAuthor(action: { type: string; payload: number }) {
+  try {
+    const detailAuthor: DetailAuthor = yield call(contentAPI.getDetailAuthor, action.payload);
+    yield put(setDetailAuthor(detailAuthor));
+  } catch (error) {
+    console.error('Failed to get detail author:', error);
+  }
+}
+
+export function* handleDeleteAuthor(action: { type: string; payload: number }) {
+  try {
+    yield call(contentAPI.deleteAuthor, action.payload);
+    yield call(handleAllAuthors);
+  } catch (error) {
+    console.error('Failed to delete post:', error);
+  }
+}
+
+export function* watchCreateAuthor() {
+  yield takeEvery(CREATE_AUTHOR_REQUEST, handleCreateAuthor);
+}
+
+export function* watchEditAuthor() {
+  yield takeEvery(EDIT_AUTHOR_REQUEST, handleEditAuthor);
+}
+
+export function* watchDetailAuthor() {
+  yield takeEvery(SET_DETAIL_AUTHOR_REQUEST, handleDetailAuthor);
+}
+
+export function* watchDeleteAuthor() {
+  yield takeEvery(DELETE_AUTHOR_REQUEST, handleDeleteAuthor);
+}
+
 export function* handleAllTags() {
   try {
     const tags: Tag[] = yield call(contentAPI.getTags);
@@ -199,5 +272,9 @@ export default function* rootSaga() {
     fork(watchDeletePost),
     fork(watchDetailPost),
     fork(watchEditPost),
+    fork(watchCreateAuthor),
+    fork(watchEditAuthor),
+    fork(watchDetailAuthor),
+    fork(watchDeleteAuthor),
   ]);
 }
