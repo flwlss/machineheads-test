@@ -2,7 +2,7 @@
 import type { Author, DetailAuthor } from "../../types/authors";
 import type { DetailPost, Post } from "../../types/posts";
 import type { Tag } from "../../types/tags";
-import { SET_ALL_AUTHORS, SET_ALL_POSTS, SET_ALL_TAGS, SET_DETAIL_AUTHOR, SET_DETAIL_POST } from "../constants";
+import { SET_ALL_AUTHORS, SET_ALL_POSTS, SET_ALL_TAGS, SET_DETAIL_AUTHOR, SET_DETAIL_POST, SET_DETAIL_TAG } from "../constants";
 
 type ContentState = {
   allPosts: Post[] | null;
@@ -10,6 +10,7 @@ type ContentState = {
   allAuthors: Author[] | null;
   detailAuthor: DetailAuthor | null;
   allTags: Tag[] | null;
+  detailTag: Tag | null;
 };
 
 type Action =
@@ -17,7 +18,8 @@ type Action =
   | { type: typeof SET_DETAIL_POST; payload: DetailPost }
   | { type: typeof SET_ALL_AUTHORS; payload: Author[] }
   | { type: typeof SET_DETAIL_AUTHOR; payload: DetailAuthor }
-  | { type: typeof SET_ALL_TAGS; payload: Tag[] };
+  | { type: typeof SET_ALL_TAGS; payload: Tag[] }
+  | { type: typeof SET_DETAIL_TAG; payload: Tag };
 
 const initialState: ContentState = {
   allPosts: null,
@@ -25,6 +27,7 @@ const initialState: ContentState = {
   allAuthors: null,
   detailAuthor: null,
   allTags: null,
+  detailTag: null,
 };
 
 const content = (
@@ -56,6 +59,11 @@ const content = (
       return {
         ...state,
         allTags: action.payload
+      };
+    case SET_DETAIL_TAG:
+      return {
+        ...state,
+        detailTag: action.payload
       };
     default:
       return state;

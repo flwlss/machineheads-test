@@ -8,10 +8,13 @@ import type { AuthCredentials, AuthError, AuthTokens } from '../../types/auth';
 import {
   CREATE_AUTHOR_REQUEST,
   CREATE_POST_REQUEST,
+  CREATE_TAG_REQUEST,
   DELETE_AUTHOR_REQUEST,
   DELETE_POST_REQUEST,
+  DELETE_TAG_REQUEST,
   EDIT_AUTHOR_REQUEST,
   EDIT_POST_REQUEST,
+  EDIT_TAG_REQUEST,
   LOGIN_REQUEST,
   PAGE_CHANGE,
   SET_ALL_AUTHORS_TO_SELECT,
@@ -19,14 +22,16 @@ import {
   SET_AUTHOR_VALIDATION_ERRORS,
   SET_DETAIL_AUTHOR_REQUEST,
   SET_DETAIL_POST_REQUEST,
-  SET_POST_VALIDATION_ERRORS
+  SET_DETAIL_TAG_REQUEST,
+  SET_POST_VALIDATION_ERRORS,
+  SET_TAG_VALIDATION_ERRORS
 } from '../constants';
 import { api, authAPI, storeTokens, TOKEN_KEY } from '../../api';
 import { PATHS } from "../../navigation/paths";
 import type { DetailPost } from "../../types/posts";
 import { setAllPosts, setDetailPost } from "../actions/post";
 import { setAllAuthors, setDetailAuthor } from "../actions/author";
-import { setAllTags } from "../actions/tag";
+import { setAllTags, setDetailTag } from "../actions/tag";
 import { postApi } from "../../api/post";
 import { authorApi } from "../../api/author";
 import { tagApi } from "../../api/tag";
@@ -232,6 +237,75 @@ export function* handleAllTags() {
   }
 }
 
+export function* handleCreateTag(action: { type: string; payload: FormData }) {
+  try {
+    yield call(tagApi.addTag, action.payload);
+    yield put({
+      type: SET_TAG_VALIDATION_ERRORS,
+      payload: null
+    });
+    yield call(handleAllTags);
+  } catch (error) {
+    console.error('Failed to create tag:', error);
+    yield put({
+      type: SET_TAG_VALIDATION_ERRORS,
+      payload: error
+    });
+  }
+}
+
+export function* handleDetailTag(action: { type: string; payload: number }) {
+  try {
+    const detailTag: Tag = yield call(tagApi.getDetailTag, action.payload);
+    yield put(setDetailTag(detailTag));
+  } catch (error) {
+    console.error('Failed to get detail tag:', error);
+  }
+}
+
+export function* handleEditTag(action: { type: string; payload: FormData, id: number }) {
+  try {
+    yield call(tagApi.editTag, action.id, action.payload);
+    yield put({
+      type: SET_TAG_VALIDATION_ERRORS,
+      payload: null
+    });
+    yield call(handleAllTags);
+  } catch (error) {
+    yield put({
+      type: SET_TAG_VALIDATION_ERRORS,
+      payload: error
+    });
+    console.error('Failed to edit tag:', error);
+  }
+}
+
+export function* handleDeleteTag(action: { type: string; payload: number }) {
+  try {
+    yield call(tagApi.deleteTag, action.payload);
+    yield call(handleAllTags);
+  } catch (error) {
+    console.error('Failed to delete tag:', error);
+  }
+}
+
+
+export function* watchCreateTag() {
+  yield takeEvery(CREATE_TAG_REQUEST, handleCreateTag);
+}
+
+export function* watchDetailTag() {
+  yield takeEvery(SET_DETAIL_TAG_REQUEST, handleDetailTag);
+}
+
+export function* watchEditTag() {
+  yield takeEvery(EDIT_TAG_REQUEST, handleEditTag);
+}
+
+export function* watchDeleteTag() {
+  yield takeEvery(DELETE_TAG_REQUEST, handleDeleteTag);
+}
+
 export function* watchTagsSelect() {
   yield takeEvery(SET_ALL_TAGS_TO_SELECT, handleAllTags);
 }
@@ -278,5 +352,9 @@ export default function* rootSaga() {
     fork(watchEditAuthor),
     fork(watchDetailAuthor),
     fork(watchDeleteAuthor),
+    fork(watchCreateTag),
+    fork(watchDetailTag),
+    fork(watchEditTag),
+    fork(watchDeleteTag),
   ]);
 }

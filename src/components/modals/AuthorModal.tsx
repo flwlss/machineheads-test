@@ -35,13 +35,10 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
 
     formData.append('name', values.name);
     formData.append('lastName', values.lastName);
-    formData.append('secondName', values.secondName);
-    formData.append('shortDescription', values.shortDescription);
-    formData.append('description', values.description);
-
-    if (file) {
-      formData.append('avatar', file);
-    }
+    values.secondName && formData.append('secondName', values.secondName);
+    values.shortDescription && formData.append('shortDescription', values.shortDescription);
+    values.description && formData.append('description', values.description);
+    file && formData.append('avatar', file);
 
     author ? dispatch(editAuthorRequest(author.id, formData)) : dispatch(createAuthorRequest(formData));
   };
@@ -135,7 +132,6 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
         <Form.Item<FieldType>
           label="SecondName"
           name="secondName"
-          rules={[{ required: true, message: 'Please input your secondName!' }]}
           help={getFieldError('secondName')}
           validateStatus={getFieldError('secondName') ? 'error' : ''}
         >
@@ -144,7 +140,6 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
         <Form.Item<FieldType>
           label="ShortDescription"
           name="shortDescription"
-          rules={[{ required: true, message: 'Please input your shortDescription!' }]}
           help={getFieldError('shortDescription')}
           validateStatus={getFieldError('shortDescription') ? 'error' : ''}
         >
@@ -153,7 +148,6 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
         <Form.Item<FieldType>
           label="Description"
           name="description"
-          rules={[{ required: true, message: 'Please input your description!' }]}
           help={getFieldError('description')}
           validateStatus={getFieldError('description') ? 'error' : ''}
         >
@@ -164,7 +158,6 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
           name="avatar"
           valuePropName="fileList"
           getValueFromEvent={e => e && e.fileList}
-          rules={[{ required: author ? false : true, message: 'Please upload an image!' }]}
           help={getFieldError('avatar')}
           validateStatus={getFieldError('avatar') ? 'error' : ''}
         >

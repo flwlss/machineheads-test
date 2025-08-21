@@ -5,9 +5,9 @@ import { Button, Card, Modal } from "antd";
 import Meta from "antd/es/card/Meta";
 import NotFoundMessage from "../components/NotFoundMessage";
 import { useEffect, useState } from "react";
-import { EditOutlined } from "@ant-design/icons";
 import AuthorModal from "../components/modals/AuthorModal";
 import { deleteAuthorRequest, setDetailAuthorRequest } from "../store/actions/author";
+import CardButtons from "../components/CardButtons";
 
 const AuthorsPage = () => {
   const dispatch = useDispatch();
@@ -39,7 +39,7 @@ const AuthorsPage = () => {
             setAuthorForEditId(null)
           }} />}
         <Modal
-          title="Удалить пост?"
+          title="Удалить автора?"
           open={isOpenedDeleteModal}
           onOk={() => {
             authorForDeleteId && dispatch(deleteAuthorRequest(authorForDeleteId));
@@ -62,18 +62,12 @@ const AuthorsPage = () => {
                 cover={<img src={item?.avatar?.url ?? 'noImage.jpeg'} alt="example" />}
               >
                 <Meta title={item.name} description={new Date(item.createdAt).toLocaleString()} />
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Button icon={<EditOutlined />}
-                    onClick={() => {
-                      setIsOpenedEditModal(prev => !prev)
-                      setAuthorForEditId(item.id)
-                    }} />
-                  <Button
-                    onClick={() => {
-                      setIsOpenedDeleteModal(prev => !prev)
-                      setAuthorForDeleteId(item.id)
-                    }} danger>Удалить</Button>
-                </div>
+                <CardButtons
+                  setIsOpenedEditModal={() => setIsOpenedEditModal(prev => !prev)}
+                  setItemForEditId={() => setAuthorForEditId(item.id)}
+                  setIsOpenedDeleteModal={() => setIsOpenedDeleteModal(prev => !prev)}
+                  setItemForDeleteId={() => setAuthorForDeleteId(item.id)}
+                />
               </Card>
             )
           }) : <NotFoundMessage />}

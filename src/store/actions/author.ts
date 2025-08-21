@@ -16,15 +16,15 @@ export const setDetailAuthorRequest = (id: number) => ({
   payload: id
 });
 
-export const setDetailAuthor = (post: DetailAuthor) => ({
+export const setDetailAuthor = (author: DetailAuthor) => ({
   type: SET_DETAIL_AUTHOR,
-  payload: post
+  payload: author
 });
 
-export const editAuthorRequest = (id: number, postData: FormData) => ({
+export const editAuthorRequest = (id: number, authorData: FormData) => ({
   type: EDIT_AUTHOR_REQUEST,
   id: id,
-  payload: postData
+  payload: authorData
 });
 
 export const deleteAuthorRequest = (id: number) => ({

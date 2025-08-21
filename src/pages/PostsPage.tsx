@@ -7,14 +7,14 @@ import NotFoundMessage from "../components/NotFoundMessage";
 import { PAGE_CHANGE } from "../store/constants";
 import PostModal from "../components/modals/PostModal";
 import { useEffect, useState } from "react";
-import { EditOutlined } from "@ant-design/icons";
 import { setDetailPostRequest, deletePostRequest } from "../store/actions/post";
+import CardButtons from "../components/CardButtons";
 
 const PostsPage = () => {
   const dispatch = useDispatch();
   const allPosts = useSelector((state: RootState) => state.content.allPosts);
   const pagination = useSelector((state: RootState) => state.pagination);
-  const detailPost = useSelector((state: RootState) => state.content.detailPost)
+  const detailPost = useSelector((state: RootState) => state.content.detailPost);
   const [isOpenedCreateModal, setIsOpenedCreateModal] = useState(false);
   const [isOpenedEditModal, setIsOpenedEditModal] = useState(false);
   const [isOpenedDeleteModal, setIsOpenedDeleteModal] = useState(false);
@@ -70,18 +70,12 @@ const PostsPage = () => {
                 cover={<img src={item.previewPicture.url} alt="example" />}
               >
                 <Meta title={item.title} description={`Автор: ${item.authorName ?? '-'}`} />
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Button icon={<EditOutlined />}
-                    onClick={() => {
-                      setIsOpenedEditModal(prev => !prev)
-                      setPostForEditId(item.id)
-                    }} />
-                  <Button
-                    onClick={() => {
-                      setIsOpenedDeleteModal(prev => !prev)
-                      setPostForDeleteId(item.id)
-                    }} danger>Удалить</Button>
-                </div>
+                <CardButtons
+                  setIsOpenedEditModal={() => setIsOpenedEditModal(prev => !prev)}
+                  setItemForEditId={() => setPostForEditId(item.id)}
+                  setIsOpenedDeleteModal={() => setIsOpenedDeleteModal(prev => !prev)}
+                  setItemForDeleteId={() => setPostForDeleteId(item.id)}
+                />
               </Card>
             )
           }) : <NotFoundMessage />}
