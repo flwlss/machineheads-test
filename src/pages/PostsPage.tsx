@@ -13,7 +13,7 @@ import CardButtons from "../components/CardButtons";
 const PostsPage = () => {
   const dispatch = useDispatch();
   const allPosts = useSelector((state: RootState) => state.content.allPosts);
-  const pagination = useSelector((state: RootState) => state.pagination);
+  const pagination = useSelector((state: RootState) => state.common.pagination);
   const detailPost = useSelector((state: RootState) => state.content.detailPost);
   const [isOpenedCreateModal, setIsOpenedCreateModal] = useState(false);
   const [isOpenedEditModal, setIsOpenedEditModal] = useState(false);
@@ -42,10 +42,7 @@ const PostsPage = () => {
         {detailPost && <PostModal
           post={detailPost}
           isOpened={isOpenedEditModal}
-          setOpen={() => {
-            setIsOpenedEditModal(prev => !prev)
-            setPostForEditId(null)
-          }} />}
+          setOpen={() => { setIsOpenedEditModal(prev => !prev) }} />}
         <Modal
           title="Удалить пост?"
           open={isOpenedDeleteModal}

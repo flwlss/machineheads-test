@@ -1,12 +1,12 @@
 import { Button, Form, Input, Modal, Upload, type FormProps } from "antd"
 import { PlusOutlined } from '@ant-design/icons';
 import { useEffect, useState } from "react";
-import { SET_AUTHOR_VALIDATION_ERRORS } from "../../store/constants";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/reducers";
 import type { UploadChangeParam } from "antd/es/upload";
 import type { DetailAuthor } from "../../types/authors";
 import { createAuthorRequest, editAuthorRequest } from "../../store/actions/author";
+import { setValidationError } from "../../store/actions";
 
 type FieldType = {
   name: string;
@@ -25,7 +25,7 @@ interface IAuthorModal {
 
 const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
   const dispatch = useDispatch();
-  const validationErrors = useSelector((state: RootState) => state.error.authorErrors);
+  const validationErrors = useSelector((state: RootState) => state.error.validationErrors);
   const [form] = Form.useForm();
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -61,7 +61,7 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
     setOpen()
     form.resetFields()
     setFile(null);
-    dispatch({ type: SET_AUTHOR_VALIDATION_ERRORS, payload: null })
+    dispatch(setValidationError(null))
   };
 
   useEffect(() => {

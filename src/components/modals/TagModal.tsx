@@ -1,10 +1,10 @@
 import { Button, Form, Input, Modal, type FormProps } from "antd"
 import { useEffect } from "react";
-import { SET_TAG_VALIDATION_ERRORS } from "../../store/constants";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/reducers";
 import type { Tag } from "../../types/tags";
 import { createTagRequest, editTagRequest } from "../../store/actions/tag";
+import { setValidationError } from "../../store/actions";
 
 type FieldType = {
   code: string;
@@ -20,7 +20,7 @@ interface ITagModal {
 
 const TagModal = ({ isOpened, setOpen, tag }: ITagModal) => {
   const dispatch = useDispatch();
-  const validationErrors = useSelector((state: RootState) => state.error.tagErrors);
+  const validationErrors = useSelector((state: RootState) => state.error.validationErrors);
   const [form] = Form.useForm();
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
@@ -44,7 +44,7 @@ const TagModal = ({ isOpened, setOpen, tag }: ITagModal) => {
   const handleCancel = () => {
     setOpen()
     form.resetFields()
-    dispatch({ type: SET_TAG_VALIDATION_ERRORS, payload: null })
+    dispatch(setValidationError(null))
   };
 
   useEffect(() => {

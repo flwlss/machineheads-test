@@ -1,18 +1,14 @@
 import type { ValidationError } from "../../types/posts";
-import { SET_AUTH_ERROR, SET_AUTHOR_VALIDATION_ERRORS, SET_POST_VALIDATION_ERRORS, SET_TAG_VALIDATION_ERRORS } from "../constants";
+import { SET_AUTH_ERROR, VALIDATION_ERROR } from "../constants";
 
 type ErrorState = {
   authError: string | null;
-  postErrors: ValidationError[] | null;
-  authorErrors: ValidationError[] | null;
-  tagErrors: ValidationError[] | null;
+  validationErrors: ValidationError[] | null;
 };
 
 const initialState: ErrorState = {
   authError: null,
-  postErrors: null,
-  authorErrors: null,
-  tagErrors: null,
+  validationErrors: null,
 };
 
 const error = (
@@ -25,20 +21,10 @@ const error = (
         ...state,
         authError: action.payload
       };
-    case SET_POST_VALIDATION_ERRORS:
+    case VALIDATION_ERROR:
       return {
         ...state,
-        postErrors: action.payload
-      };
-    case SET_AUTHOR_VALIDATION_ERRORS:
-      return {
-        ...state,
-        authorErrors: action.payload
-      };
-    case SET_TAG_VALIDATION_ERRORS:
-      return {
-        ...state,
-        tagErrors: action.payload
+        validationErrors: action.payload
       };
     default:
       return state;

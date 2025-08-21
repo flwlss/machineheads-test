@@ -1,12 +1,13 @@
 import { Button, Form, Input, Modal, Select, Upload, type FormProps } from "antd"
 import { PlusOutlined } from '@ant-design/icons';
 import { useEffect, useMemo, useState } from "react";
-import { SET_ALL_AUTHORS_TO_SELECT, SET_ALL_TAGS_TO_SELECT, SET_POST_VALIDATION_ERRORS } from "../../store/constants";
+import { SET_ALL_AUTHORS_TO_SELECT, SET_ALL_TAGS_TO_SELECT } from "../../store/constants";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/reducers";
 import type { UploadChangeParam } from "antd/es/upload";
 import type { DetailPost } from "../../types/posts";
 import { editPostRequest, createPostRequest } from "../../store/actions/post";
+import { setValidationError } from "../../store/actions";
 
 type FieldType = {
   code: string;
@@ -27,7 +28,7 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
   const dispatch = useDispatch();
   const allTags = useSelector((state: RootState) => state.content.allTags)
   const allAuthors = useSelector((state: RootState) => state.content.allAuthors)
-  const validationErrors = useSelector((state: RootState) => state.error.postErrors);
+  const validationErrors = useSelector((state: RootState) => state.error.validationErrors);
   const [form] = Form.useForm();
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -77,7 +78,7 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
     setOpen()
     form.resetFields()
     setFile(null);
-    dispatch({ type: SET_POST_VALIDATION_ERRORS, payload: null })
+    dispatch(setValidationError(null))
   };
 
   useEffect(() => {

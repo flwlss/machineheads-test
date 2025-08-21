@@ -83,3 +83,7 @@ body {
   display: flex;
   justify-content: space-between;
 }
+
+.ant-spin-fullscreen {
+  z-index: 9999;
+}

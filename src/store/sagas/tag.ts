@@ -8,15 +8,19 @@ import {
   EDIT_TAG_REQUEST,
   SET_ALL_TAGS_TO_SELECT,
   SET_DETAIL_TAG_REQUEST,
-  SET_TAG_VALIDATION_ERRORS
 } from "../constants";
+import { setLoading, setValidationError } from "../actions";
+import type { ValidationError } from "../../types/posts";
 
 export function* handleAllTags() {
   try {
+    yield put(setLoading(true));
     const tags: Tag[] = yield call(tagApi.getTags);
     yield put(setAllTags(tags));
   } catch (error) {
     console.error('Failed to fetch tags:', error);
+  } finally {
+    yield put(setLoading(false));
   }
 }
 
@@ -26,18 +30,16 @@ export function* watchTagsSelect() {
 
 export function* handleCreateTag(action: { type: string; payload: FormData }) {
   try {
+    yield put(setLoading(true));
     yield call(tagApi.addTag, action.payload);
-    yield put({
-      type: SET_TAG_VALIDATION_ERRORS,
-      payload: null
-    });
+    yield put(setValidationError(null));
     yield call(handleAllTags);
   } catch (error) {
+    const errorMessages = error as ValidationError[]
     console.error('Failed to create tag:', error);
-    yield put({
-      type: SET_TAG_VALIDATION_ERRORS,
-      payload: error
-    });
+    yield put(setValidationError(errorMessages));
+  } finally {
+    yield put(setLoading(false));
   }
 }
 
@@ -47,10 +49,13 @@ export function* watchCreateTag() {
 
 export function* handleDetailTag(action: { type: string; payload: number }) {
   try {
+    yield put(setLoading(true));
     const detailTag: Tag = yield call(tagApi.getDetailTag, action.payload);
     yield put(setDetailTag(detailTag));
   } catch (error) {
     console.error('Failed to get detail tag:', error);
+  } finally {
+    yield put(setLoading(false));
   }
 }
 
@@ -60,18 +65,16 @@ export function* watchDetailTag() {
 
 export function* handleEditTag(action: { type: string; payload: FormData, id: number }) {
   try {
+    yield put(setLoading(true));
     yield call(tagApi.editTag, action.id, action.payload);
-    yield put({
-      type: SET_TAG_VALIDATION_ERRORS,
-      payload: null
-    });
+    yield put(setValidationError(null));
     yield call(handleAllTags);
   } catch (error) {
-    yield put({
-      type: SET_TAG_VALIDATION_ERRORS,
-      payload: error
-    });
+    const errorMessages = error as ValidationError[]
     console.error('Failed to edit tag:', error);
+    yield put(setValidationError(errorMessages));
+  } finally {
+    yield put(setLoading(false));
   }
 }
 
@@ -81,10 +84,13 @@ export function* watchEditTag() {
 
 export function* handleDeleteTag(action: { type: string; payload: number }) {
   try {
+    yield put(setLoading(true));
     yield call(tagApi.deleteTag, action.payload);
     yield call(handleAllTags);
   } catch (error) {
     console.error('Failed to delete tag:', error);
+  } finally {
+    yield put(setLoading(false));
   }
 }
 

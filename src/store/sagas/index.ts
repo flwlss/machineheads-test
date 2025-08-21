@@ -1,6 +1,6 @@
 import { takeEvery, put, call, fork, all, select, takeLeading } from "redux-saga/effects";
 import { LOCATION_CHANGE, push } from 'connected-react-router';
-import { setAuthTokens, setAuthError } from "../actions";
+import { setAuthTokens, setAuthError, setLoading } from "../actions";
 import Cookies from 'js-cookie';
 import type { AuthCredentials, AuthError, AuthTokens } from '../../types/auth';
 import { LOGIN_REQUEST } from '../constants';
@@ -12,6 +12,7 @@ import { handleAllTags, watchCreateTag, watchDeleteTag, watchDetailTag, watchEdi
 
 export function* handleLogin(action: { type: string; payload: AuthCredentials }) {
   try {
+    yield put(setLoading(true));
     const response: AuthTokens = yield call(authAPI.login, action.payload);
     yield put(setAuthTokens(response));
     yield put(setAuthError(null));
@@ -21,6 +22,8 @@ export function* handleLogin(action: { type: string; payload: AuthCredentials })
     console.error('Login failed:', error);
     const message = error as AuthError;
     yield put(setAuthError(message.response.data.message));
+  } finally {
+    yield put(setLoading(false));
   }
 }
 
@@ -51,17 +54,20 @@ export default function* rootSaga() {
   yield all([
     takeLeading(LOCATION_CHANGE, watchContentSaga),
     fork(watchLoginSaga),
+
     fork(watchPageChange),
-    fork(watchTagsSelect),
-    fork(watchAuthorsSelect),
     fork(watchCreatePost),
-    fork(watchDeletePost),
     fork(watchDetailPost),
     fork(watchEditPost),
+    fork(watchDeletePost),
+
+    fork(watchAuthorsSelect),
     fork(watchCreateAuthor),
-    fork(watchEditAuthor),
     fork(watchDetailAuthor),
+    fork(watchEditAuthor),
     fork(watchDeleteAuthor),
+
+    fork(watchTagsSelect),
     fork(watchCreateTag),
     fork(watchDetailTag),
     fork(watchEditTag),

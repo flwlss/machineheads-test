@@ -33,10 +33,7 @@ const TagsPage = () => {
         {detailTag && <TagModal
           tag={detailTag}
           isOpened={isOpenedEditModal}
-          setOpen={() => {
-            setIsOpenedEditModal(prev => !prev)
-            setTagForEditId(null)
-          }} />}
+          setOpen={() => { setIsOpenedEditModal(prev => !prev) }} />}
         <Modal
           title="Удалить тег?"
           open={isOpenedDeleteModal}

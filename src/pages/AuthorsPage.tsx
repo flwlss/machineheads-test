@@ -34,10 +34,7 @@ const AuthorsPage = () => {
         {detailAuthor && <AuthorModal
           author={detailAuthor}
           isOpened={isOpenedEditModal}
-          setOpen={() => {
-            setIsOpenedEditModal(prev => !prev)
-            setAuthorForEditId(null)
-          }} />}
+          setOpen={() => { setIsOpenedEditModal(prev => !prev) }} />}
         <Modal
           title="Удалить автора?"
           open={isOpenedDeleteModal}
