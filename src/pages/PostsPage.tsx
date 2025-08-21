@@ -36,10 +36,10 @@ const PostsPage = () => {
       pagination={pagination}
       handlePageChange={handlePageChange}>
       <>
-        <PostModal
+        {isOpenedCreateModal && <PostModal
           isOpened={isOpenedCreateModal}
-          setOpen={() => { setIsOpenedCreateModal(prev => !prev) }} />
-        {detailPost && <PostModal
+          setOpen={() => { setIsOpenedCreateModal(prev => !prev) }} />}
+        {detailPost && isOpenedEditModal && <PostModal
           post={detailPost}
           isOpened={isOpenedEditModal}
           setOpen={() => { setIsOpenedEditModal(prev => !prev) }} />}

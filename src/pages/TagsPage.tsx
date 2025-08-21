@@ -27,10 +27,10 @@ const TagsPage = () => {
   return (
     <PageContainer>
       <>
-        <TagModal
+        {isOpenedCreateModal && <TagModal
           isOpened={isOpenedCreateModal}
-          setOpen={() => { setIsOpenedCreateModal(prev => !prev) }} />
-        {detailTag && <TagModal
+          setOpen={() => { setIsOpenedCreateModal(prev => !prev) }} />}
+        {detailTag && isOpenedEditModal && <TagModal
           tag={detailTag}
           isOpened={isOpenedEditModal}
           setOpen={() => { setIsOpenedEditModal(prev => !prev) }} />}

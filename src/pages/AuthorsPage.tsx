@@ -28,10 +28,10 @@ const AuthorsPage = () => {
   return (
     <PageContainer>
       <>
-        <AuthorModal
+        {isOpenedCreateModal && <AuthorModal
           isOpened={isOpenedCreateModal}
-          setOpen={() => { setIsOpenedCreateModal(prev => !prev) }} />
-        {detailAuthor && <AuthorModal
+          setOpen={() => { setIsOpenedCreateModal(prev => !prev) }} />}
+        {detailAuthor && isOpenedEditModal && <AuthorModal
           author={detailAuthor}
           isOpened={isOpenedEditModal}
           setOpen={() => { setIsOpenedEditModal(prev => !prev) }} />}
