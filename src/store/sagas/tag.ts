@@ -18,7 +18,7 @@ export function* handleAllTags() {
     const tags: Tag[] = yield call(tagApi.getTags);
     yield put(setAllTags(tags));
   } catch (error) {
-    console.error('Failed to fetch tags:', error);
+    console.error("Failed to fetch tags:", error);
   } finally {
     yield put(setLoading(false));
   }
@@ -35,8 +35,8 @@ export function* handleCreateTag(action: { type: string; payload: FormData }) {
     yield put(setValidationError(null));
     yield call(handleAllTags);
   } catch (error) {
-    const errorMessages = error as ValidationError[]
-    console.error('Failed to create tag:', error);
+    const errorMessages = error as ValidationError[];
+    console.error("Failed to create tag:", error);
     yield put(setValidationError(errorMessages));
   } finally {
     yield put(setLoading(false));
@@ -53,7 +53,7 @@ export function* handleDetailTag(action: { type: string; payload: number }) {
     const detailTag: Tag = yield call(tagApi.getDetailTag, action.payload);
     yield put(setDetailTag(detailTag));
   } catch (error) {
-    console.error('Failed to get detail tag:', error);
+    console.error("Failed to get detail tag:", error);
   } finally {
     yield put(setLoading(false));
   }
@@ -63,15 +63,19 @@ export function* watchDetailTag() {
   yield takeEvery(SET_DETAIL_TAG_REQUEST, handleDetailTag);
 }
 
-export function* handleEditTag(action: { type: string; payload: FormData, id: number }) {
+export function* handleEditTag(action: {
+  type: string;
+  payload: FormData;
+  id: number;
+}) {
   try {
     yield put(setLoading(true));
     yield call(tagApi.editTag, action.id, action.payload);
     yield put(setValidationError(null));
     yield call(handleAllTags);
   } catch (error) {
-    const errorMessages = error as ValidationError[]
-    console.error('Failed to edit tag:', error);
+    const errorMessages = error as ValidationError[];
+    console.error("Failed to edit tag:", error);
     yield put(setValidationError(errorMessages));
   } finally {
     yield put(setLoading(false));
@@ -88,7 +92,7 @@ export function* handleDeleteTag(action: { type: string; payload: number }) {
     yield call(tagApi.deleteTag, action.payload);
     yield call(handleAllTags);
   } catch (error) {
-    console.error('Failed to delete tag:', error);
+    console.error("Failed to delete tag:", error);
   } finally {
     yield put(setLoading(false));
   }

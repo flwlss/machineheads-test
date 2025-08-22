@@ -1,32 +1,20 @@
-import { EditOutlined } from "@ant-design/icons"
-import { Button } from "antd"
+import { EditOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 
 interface ICardButtons {
-  setIsOpenedEditModal: () => void;
-  setItemForEditId: () => void;
-  setIsOpenedDeleteModal: () => void;
-  setItemForDeleteId: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-const CardButtons = ({
-  setIsOpenedEditModal,
-  setItemForEditId,
-  setIsOpenedDeleteModal,
-  setItemForDeleteId }: ICardButtons) => {
+const CardButtons = ({ onEdit, onDelete }: ICardButtons) => {
   return (
     <div className="cardButtons">
-      <Button icon={<EditOutlined />}
-        onClick={() => {
-          setIsOpenedEditModal()
-          setItemForEditId()
-        }} />
-      <Button
-        onClick={() => {
-          setIsOpenedDeleteModal()
-          setItemForDeleteId()
-        }} danger>Удалить</Button>
+      <Button icon={<EditOutlined />} onClick={onEdit} />
+      <Button onClick={onDelete} danger>
+        Удалить
+      </Button>
     </div>
-  )
-}
+  );
+};
 
 export default CardButtons;

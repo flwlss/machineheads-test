@@ -6,80 +6,119 @@ import { Button, Card, Modal } from "antd";
 import NotFoundMessage from "../components/NotFoundMessage";
 import { PAGE_CHANGE } from "../store/constants";
 import PostModal from "../components/modals/PostModal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { setDetailPostRequest, deletePostRequest } from "../store/actions/post";
 import CardButtons from "../components/CardButtons";
+
+export interface ModalState {
+  create: boolean;
+  edit: boolean;
+  delete: boolean;
+}
 
 const PostsPage = () => {
   const dispatch = useDispatch();
   const allPosts = useSelector((state: RootState) => state.content.allPosts);
   const pagination = useSelector((state: RootState) => state.common.pagination);
-  const detailPost = useSelector((state: RootState) => state.content.detailPost);
-  const [isOpenedCreateModal, setIsOpenedCreateModal] = useState(false);
-  const [isOpenedEditModal, setIsOpenedEditModal] = useState(false);
-  const [isOpenedDeleteModal, setIsOpenedDeleteModal] = useState(false);
+  const detailPost = useSelector(
+    (state: RootState) => state.content.detailPost
+  );
+  const [modalState, setModalState] = useState<ModalState>({
+    create: false,
+    edit: false,
+    delete: false,
+  });
   const [postForDeleteId, setPostForDeleteId] = useState<number | null>(null);
   const [postForEditId, setPostForEditId] = useState<number | null>(null);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     dispatch({ type: PAGE_CHANGE, payload: { page } });
-  };
+  }, []);
+
+  const handleOpenModal = useCallback((modal: keyof ModalState) => {
+    setModalState((prev) => ({ ...prev, [modal]: !prev[modal] }));
+  }, []);
+
+  const handleEdit = useCallback((id: number) => {
+    setPostForEditId(id);
+    handleOpenModal("edit");
+  }, []);
+
+  const handleDelete = useCallback(() => {
+    if (postForDeleteId) {
+      dispatch(deletePostRequest(postForDeleteId));
+    }
+    handleOpenModal("delete");
+  }, [postForDeleteId]);
+
+  const handleDeleteClick = useCallback((id: number) => {
+    setPostForDeleteId(id);
+    handleOpenModal("delete");
+  }, []);
 
   useEffect(() => {
     if (postForEditId) {
-      dispatch(setDetailPostRequest(postForEditId))
+      dispatch(setDetailPostRequest(postForEditId));
     }
-  }, [postForEditId])
+  }, [postForEditId]);
 
   return (
-    <PageContainer
-      pagination={pagination}
-      handlePageChange={handlePageChange}>
+    <PageContainer pagination={pagination} handlePageChange={handlePageChange}>
       <>
-        {isOpenedCreateModal && <PostModal
-          isOpened={isOpenedCreateModal}
-          setOpen={() => { setIsOpenedCreateModal(prev => !prev) }} />}
-        {detailPost && isOpenedEditModal && <PostModal
-          post={detailPost}
-          isOpened={isOpenedEditModal}
-          setOpen={() => { setIsOpenedEditModal(prev => !prev) }} />}
+        {modalState.create && (
+          <PostModal
+            isOpened={modalState.create}
+            setOpen={() => handleOpenModal("create")}
+          />
+        )}
+        {detailPost && modalState.edit && (
+          <PostModal
+            post={detailPost}
+            isOpened={modalState.edit}
+            setOpen={() => handleOpenModal("edit")}
+          />
+        )}
         <Modal
           title="Удалить пост?"
-          open={isOpenedDeleteModal}
-          onOk={() => {
-            postForDeleteId && dispatch(deletePostRequest(postForDeleteId));
-            setIsOpenedDeleteModal(prev => !prev)
-          }}
-          onCancel={() => { setIsOpenedDeleteModal(prev => !prev) }} />
-        <Button style={{ marginBottom: 20 }}
-          onClick={() => {
-            setIsOpenedCreateModal(prev => !prev)
-          }}
-        >Создать пост</Button>
+          open={modalState.delete}
+          onOk={handleDelete}
+          onCancel={() => handleOpenModal("delete")}
+        />
+        <Button
+          style={{ marginBottom: 20 }}
+          onClick={() => handleOpenModal("create")}
+        >
+          Создать пост
+        </Button>
         <div className="content">
-          {allPosts ? allPosts.map((item) => {
-            return (
-              <Card
-                key={item.id}
-                hoverable
-                style={{ width: 230 }}
-                styles={{ cover: { margin: 0 } }}
-                cover={<img src={item.previewPicture.url} alt="example" />}
-              >
-                <Meta title={item.title} description={`Автор: ${item.authorName ?? '-'}`} />
-                <CardButtons
-                  setIsOpenedEditModal={() => setIsOpenedEditModal(prev => !prev)}
-                  setItemForEditId={() => setPostForEditId(item.id)}
-                  setIsOpenedDeleteModal={() => setIsOpenedDeleteModal(prev => !prev)}
-                  setItemForDeleteId={() => setPostForDeleteId(item.id)}
-                />
-              </Card>
-            )
-          }) : <NotFoundMessage />}
+          {allPosts ? (
+            allPosts.map((item) => {
+              return (
+                <Card
+                  key={item.id}
+                  hoverable
+                  style={{ width: 230 }}
+                  styles={{ cover: { margin: 0 } }}
+                  cover={<img src={item.previewPicture.url} alt="example" />}
+                >
+                  <Meta
+                    title={item.title}
+                    description={`Автор: ${item.authorName ?? "-"}`}
+                  />
+                  <CardButtons
+                    onEdit={() => handleEdit(item.id)}
+                    onDelete={() => handleDeleteClick(item.id)}
+                  />
+                </Card>
+              );
+            })
+          ) : (
+            <NotFoundMessage />
+          )}
         </div>
       </>
     </PageContainer>
-  )
-}
+  );
+};
 
-export default PostsPage
+export default PostsPage;

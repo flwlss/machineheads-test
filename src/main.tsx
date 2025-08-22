@@ -1,11 +1,11 @@
-import ReactDOM from 'react-dom'
-import { StrictMode } from 'react'
-import './index.css'
-import App from './App.tsx'
-import store from './store/store.ts'
-import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
-import { history } from './store/reducers/index.ts'
+import ReactDOM from "react-dom";
+import { StrictMode } from "react";
+import "./index.css";
+import App from "./App.tsx";
+import store from "./store/store.ts";
+import { Provider } from "react-redux";
+import { ConnectedRouter } from "connected-react-router";
+import { history } from "./store/reducers/index.ts";
 
 ReactDOM.render(
   <StrictMode>
@@ -15,5 +15,5 @@ ReactDOM.render(
       </ConnectedRouter>
     </Provider>
   </StrictMode>,
-  document.getElementById('root')
-)
+  document.getElementById("root")
+);

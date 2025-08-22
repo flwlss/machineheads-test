@@ -5,36 +5,36 @@ import {
   DELETE_POST_REQUEST,
   SET_DETAIL_POST_REQUEST,
   SET_DETAIL_POST,
-  EDIT_POST_REQUEST
+  EDIT_POST_REQUEST,
 } from "../constants";
 
 export const setAllPosts = (payload: Post[]) => ({
   type: SET_ALL_POSTS,
-  payload
+  payload,
 });
 
 export const createPostRequest = (postData: FormData) => ({
   type: CREATE_POST_REQUEST,
-  payload: postData
+  payload: postData,
 });
 
 export const setDetailPostRequest = (id: number) => ({
   type: SET_DETAIL_POST_REQUEST,
-  payload: id
+  payload: id,
 });
 
 export const setDetailPost = (post: DetailPost) => ({
   type: SET_DETAIL_POST,
-  payload: post
+  payload: post,
 });
 
 export const editPostRequest = (id: number, postData: FormData) => ({
   type: EDIT_POST_REQUEST,
   id: id,
-  payload: postData
+  payload: postData,
 });
 
 export const deletePostRequest = (id: number) => ({
   type: DELETE_POST_REQUEST,
-  payload: id
+  payload: id,
 });

@@ -20,7 +20,7 @@ export function* handleAllPosts(action?: { payload: { page: number } }) {
     yield put(setAllPosts(posts));
     yield put(setPagination(pagination));
   } catch (error) {
-    console.error('Failed to fetch posts:', error);
+    console.error("Failed to fetch posts:", error);
   } finally {
     yield put(setLoading(false));
   }
@@ -39,12 +39,12 @@ export function* handleCreatePost(action: { type: string; payload: FormData }) {
     );
     yield put({
       type: PAGE_CHANGE,
-      payload: { page: currentPage }
+      payload: { page: currentPage },
     });
     yield put(setValidationError(null));
   } catch (error) {
-    const errorMessages = error as ValidationError[]
-    console.error('Failed to create post:', error);
+    const errorMessages = error as ValidationError[];
+    console.error("Failed to create post:", error);
     yield put(setValidationError(errorMessages));
   } finally {
     yield put(setLoading(false));
@@ -58,10 +58,13 @@ export function* watchCreatePost() {
 export function* handleDetailPost(action: { type: string; payload: number }) {
   try {
     yield put(setLoading(true));
-    const detailPost: DetailPost = yield call(postApi.getDetailPost, action.payload);
+    const detailPost: DetailPost = yield call(
+      postApi.getDetailPost,
+      action.payload
+    );
     yield put(setDetailPost(detailPost));
   } catch (error) {
-    console.error('Failed to get detail post:', error);
+    console.error("Failed to get detail post:", error);
   } finally {
     yield put(setLoading(false));
   }
@@ -71,7 +74,11 @@ export function* watchDetailPost() {
   yield takeEvery(SET_DETAIL_POST_REQUEST, handleDetailPost);
 }
 
-export function* handleEditPost(action: { type: string; payload: FormData, id: number }) {
+export function* handleEditPost(action: {
+  type: string;
+  payload: FormData;
+  id: number;
+}) {
   try {
     yield put(setLoading(true));
     yield call(postApi.editPost, action.id, action.payload);
@@ -80,12 +87,12 @@ export function* handleEditPost(action: { type: string; payload: FormData, id: n
     );
     yield put({
       type: PAGE_CHANGE,
-      payload: { page: currentPage }
+      payload: { page: currentPage },
     });
     yield put(setValidationError(null));
   } catch (error) {
-    const errorMessages = error as ValidationError[]
-    console.error('Failed to edit post:', error);
+    const errorMessages = error as ValidationError[];
+    console.error("Failed to edit post:", error);
     yield put(setValidationError(errorMessages));
   } finally {
     yield put(setLoading(false));
@@ -105,10 +112,10 @@ export function* handleDeletePost(action: { type: string; payload: number }) {
     );
     yield put({
       type: PAGE_CHANGE,
-      payload: { page: currentPage }
+      payload: { page: currentPage },
     });
   } catch (error) {
-    console.error('Failed to delete post:', error);
+    console.error("Failed to delete post:", error);
   } finally {
     yield put(setLoading(false));
   }

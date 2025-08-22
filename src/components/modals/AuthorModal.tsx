@@ -1,11 +1,14 @@
-import { Button, Form, Input, Modal, Upload, type FormProps } from "antd"
-import { PlusOutlined } from '@ant-design/icons';
-import { useEffect, useState } from "react";
+import { Button, Form, Input, Modal, Upload, type FormProps } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/reducers";
 import type { UploadChangeParam } from "antd/es/upload";
 import type { DetailAuthor } from "../../types/authors";
-import { createAuthorRequest, editAuthorRequest } from "../../store/actions/author";
+import {
+  createAuthorRequest,
+  editAuthorRequest,
+} from "../../store/actions/author";
 import { setValidationError } from "../../store/actions";
 
 type FieldType = {
@@ -25,44 +28,55 @@ interface IAuthorModal {
 
 const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
   const dispatch = useDispatch();
-  const validationErrors = useSelector((state: RootState) => state.error.validationErrors);
+  const validationErrors = useSelector(
+    (state: RootState) => state.error.validationErrors
+  );
   const [form] = Form.useForm();
   const [file, setFile] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const formData = new FormData();
 
-    formData.append('name', values.name);
-    formData.append('lastName', values.lastName);
-    values.secondName && formData.append('secondName', values.secondName);
-    values.shortDescription && formData.append('shortDescription', values.shortDescription);
-    values.description && formData.append('description', values.description);
-    file && formData.append('avatar', file);
+    formData.append("name", values.name);
+    formData.append("lastName", values.lastName);
+    values.secondName && formData.append("secondName", values.secondName);
+    values.shortDescription &&
+      formData.append("shortDescription", values.shortDescription);
+    values.description && formData.append("description", values.description);
+    file && formData.append("avatar", file);
 
-    author ? dispatch(editAuthorRequest(author.id, formData)) : dispatch(createAuthorRequest(formData));
+    author
+      ? dispatch(editAuthorRequest(author.id, formData))
+      : dispatch(createAuthorRequest(formData));
   };
 
-  const getFieldError = (fieldName: string): string | undefined => {
-    return validationErrors?.find(error => error.field === fieldName)?.message;
-  };
+  const getFieldError = useCallback(
+    (fieldName: string): string | undefined => {
+      return validationErrors?.find((error) => error.field === fieldName)
+        ?.message;
+    },
+    [validationErrors]
+  );
 
-  const handleFileChange = (info: UploadChangeParam) => {
-    if (info.file.originFileObj) {
-      setFile(info.file.originFileObj);
+  const handleFileChange = useCallback((info: UploadChangeParam) => {
+    const file = info.file.originFileObj;
+    if (file) {
+      setFile(file);
     }
-  };
+  }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     form.submit();
-  };
+  }, [form]);
 
-  const handleCancel = () => {
-    setOpen()
-    form.resetFields()
+  const handleCancel = useCallback(() => {
+    setOpen();
+    form.resetFields();
     setFile(null);
-    dispatch(setValidationError(null))
-  };
+    setImageUrl(null);
+    dispatch(setValidationError(null));
+  }, []);
 
   useEffect(() => {
     if (author && isOpened) {
@@ -75,11 +89,12 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
       });
 
       if (author?.avatar?.url) {
-        setImageUrl(author?.avatar?.url)
+        setImageUrl(author?.avatar?.url);
       }
     } else {
-      form.resetFields()
+      form.resetFields();
       setFile(null);
+      setImageUrl(null);
     }
   }, [author, isOpened, form]);
 
@@ -94,10 +109,10 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
   return (
     <Modal
       open={isOpened}
-      title={author ? 'Редактировать автора' : 'Создать автора'}
+      title={author ? "Редактировать автора" : "Создать автора"}
       onCancel={handleCancel}
       footer={[
-        <Button onClick={handleCancel} key="back" >
+        <Button onClick={handleCancel} key="back">
           Отмена
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
@@ -105,17 +120,13 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
         </Button>,
       ]}
     >
-      <Form
-        form={form}
-        labelCol={{ span: 7 }}
-        onFinish={onFinish}
-      >
+      <Form form={form} labelCol={{ span: 7 }} onFinish={onFinish}>
         <Form.Item<FieldType>
           label="Name"
           name="name"
-          rules={[{ required: true, message: 'Please input your name!' }]}
-          help={getFieldError('name')}
-          validateStatus={getFieldError('name') ? 'error' : ''}
+          rules={[{ required: true, message: "Please input your name!" }]}
+          help={getFieldError("name")}
+          validateStatus={getFieldError("name") ? "error" : ""}
         >
           <Input />
         </Form.Item>
@@ -123,33 +134,33 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
         <Form.Item<FieldType>
           label="LastName"
           name="lastName"
-          rules={[{ required: true, message: 'Please input your lastName!' }]}
-          help={getFieldError('lastName')}
-          validateStatus={getFieldError('lastName') ? 'error' : ''}
+          rules={[{ required: true, message: "Please input your lastName!" }]}
+          help={getFieldError("lastName")}
+          validateStatus={getFieldError("lastName") ? "error" : ""}
         >
           <Input />
         </Form.Item>
         <Form.Item<FieldType>
           label="SecondName"
           name="secondName"
-          help={getFieldError('secondName')}
-          validateStatus={getFieldError('secondName') ? 'error' : ''}
+          help={getFieldError("secondName")}
+          validateStatus={getFieldError("secondName") ? "error" : ""}
         >
           <Input />
         </Form.Item>
         <Form.Item<FieldType>
           label="ShortDescription"
           name="shortDescription"
-          help={getFieldError('shortDescription')}
-          validateStatus={getFieldError('shortDescription') ? 'error' : ''}
+          help={getFieldError("shortDescription")}
+          validateStatus={getFieldError("shortDescription") ? "error" : ""}
         >
           <Input />
         </Form.Item>
         <Form.Item<FieldType>
           label="Description"
           name="description"
-          help={getFieldError('description')}
-          validateStatus={getFieldError('description') ? 'error' : ''}
+          help={getFieldError("description")}
+          validateStatus={getFieldError("description") ? "error" : ""}
         >
           <Input />
         </Form.Item>
@@ -157,9 +168,9 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
           label="Avatar"
           name="avatar"
           valuePropName="fileList"
-          getValueFromEvent={e => e && e.fileList}
-          help={getFieldError('avatar')}
-          validateStatus={getFieldError('avatar') ? 'error' : ''}
+          getValueFromEvent={(e) => e && e.fileList}
+          help={getFieldError("avatar")}
+          validateStatus={getFieldError("avatar") ? "error" : ""}
         >
           <Upload
             name="avatar"
@@ -172,11 +183,7 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
             onChange={handleFileChange}
           >
             {imageUrl && !file ? (
-              <img
-                src={imageUrl}
-                alt="Preview"
-                className="prewiewAvatar"
-              />
+              <img src={imageUrl} alt="Preview" className="prewiewAvatar" />
             ) : file ? (
               <img
                 src={URL.createObjectURL(file)}
@@ -193,7 +200,7 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
         </Form.Item>
       </Form>
     </Modal>
-  )
-}
+  );
+};
 
 export default AuthorModal;

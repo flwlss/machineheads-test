@@ -1,27 +1,34 @@
-import { Menu } from 'antd';
-import { Header } from 'antd/es/layout/layout'
-import { useHistory } from 'react-router-dom';
-import { PATHS } from '../navigation/paths';
+import { Header } from "antd/es/layout/layout";
+import { Link, useLocation } from "react-router-dom";
+import { PATHS } from "../navigation/paths";
+import { Typography } from "antd";
 
 const HeaderNav = () => {
-  const navigate = useHistory()
+  const { pathname } = useLocation();
 
   const items = [
-    { key: PATHS.POSTS, label: 'Posts', onClick: () => navigate.push(PATHS.POSTS) },
-    { key: PATHS.AUTHORS, label: 'Authors', onClick: () => navigate.push(PATHS.AUTHORS) },
-    { key: PATHS.TAGS, label: 'Tags', onClick: () => navigate.push(PATHS.TAGS) },
+    { key: 1, label: "Posts", path: PATHS.POSTS },
+    { key: 2, label: "Authors", path: PATHS.AUTHORS },
+    { key: 3, label: "Tags", path: PATHS.TAGS },
   ];
 
   return (
     <Header>
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        selectedKeys={[location.pathname]}
-        items={items}
-      />
+      <nav>
+        {items.map((item) => {
+          return (
+            <Link key={item.key} to={item.path}>
+              <Typography.Text
+                className={item.path === pathname ? "navActive" : "navInactive"}
+              >
+                {item.label}
+              </Typography.Text>
+            </Link>
+          );
+        })}
+      </nav>
     </Header>
-  )
-}
+  );
+};
 
-export default HeaderNav
+export default HeaderNav;

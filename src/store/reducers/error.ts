@@ -13,18 +13,18 @@ const initialState: ErrorState = {
 
 const error = (
   state: ErrorState = initialState,
-  action: { type: string, payload: any }
+  action: { type: string; payload: any }
 ): ErrorState => {
   switch (action.type) {
     case SET_AUTH_ERROR:
       return {
         ...state,
-        authError: action.payload
+        authError: action.payload,
       };
     case VALIDATION_ERROR:
       return {
         ...state,
-        validationErrors: action.payload
+        validationErrors: action.payload,
       };
     default:
       return state;

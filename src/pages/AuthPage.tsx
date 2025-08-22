@@ -5,7 +5,7 @@ const AuthPage = () => {
     <div className="authPageWrapper">
       <AuthForm />
     </div>
-  )
-}
+  );
+};
 
 export default AuthPage;

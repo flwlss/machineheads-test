@@ -1,11 +1,11 @@
-import { Switch, Redirect } from 'react-router-dom';
-import { PATHS } from "./paths"
-import AuthPage from "../pages/AuthPage"
-import AuthorsPage from '../pages/AuthorsPage';
-import PostsPage from '../pages/PostsPage';
-import TagsPage from '../pages/TagsPage';
-import PrivateRoute from './PrivateRoute';
-import PublicRoute from './PublickRoute';
+import { Switch, Redirect } from "react-router-dom";
+import { PATHS } from "./paths";
+import AuthPage from "../pages/AuthPage";
+import AuthorsPage from "../pages/AuthorsPage";
+import PostsPage from "../pages/PostsPage";
+import TagsPage from "../pages/TagsPage";
+import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublickRoute";
 
 const Router = () => {
   return (
@@ -18,7 +18,7 @@ const Router = () => {
 
       <Redirect to={PATHS.AUTH} />
     </Switch>
-  )
-}
+  );
+};
 
-export default Router
+export default Router;

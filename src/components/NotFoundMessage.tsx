@@ -1,9 +1,7 @@
-import { Typography } from "antd"
+import { Typography } from "antd";
 
 const NotFoundMessage = () => {
-  return (
-    <Typography>Не найдено</Typography>
-  )
-}
+  return <Typography>Не найдено</Typography>;
+};
 
 export default NotFoundMessage;

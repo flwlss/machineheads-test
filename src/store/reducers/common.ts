@@ -11,7 +11,7 @@ const initialState: CommonState = {
     currentPage: 0,
     pageCount: 0,
     perPage: 0,
-    totalCount: 0
+    totalCount: 0,
   },
   loading: false,
 };
@@ -24,12 +24,12 @@ const common = (
     case SET_PAGINATION:
       return {
         ...state,
-        pagination: action.payload
+        pagination: action.payload,
       };
     case SET_LOADING:
       return {
         ...state,
-        loading: action.payload
+        loading: action.payload,
       };
     default:
       return state;

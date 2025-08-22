@@ -1,8 +1,14 @@
-
 import type { Author, DetailAuthor } from "../../types/authors";
 import type { DetailPost, Post } from "../../types/posts";
 import type { Tag } from "../../types/tags";
-import { SET_ALL_AUTHORS, SET_ALL_POSTS, SET_ALL_TAGS, SET_DETAIL_AUTHOR, SET_DETAIL_POST, SET_DETAIL_TAG } from "../constants";
+import {
+  SET_ALL_AUTHORS,
+  SET_ALL_POSTS,
+  SET_ALL_TAGS,
+  SET_DETAIL_AUTHOR,
+  SET_DETAIL_POST,
+  SET_DETAIL_TAG,
+} from "../constants";
 
 type ContentState = {
   allPosts: Post[] | null;
@@ -38,32 +44,32 @@ const content = (
     case SET_ALL_POSTS:
       return {
         ...state,
-        allPosts: action.payload
+        allPosts: action.payload,
       };
     case SET_DETAIL_POST:
       return {
         ...state,
-        detailPost: action.payload
+        detailPost: action.payload,
       };
     case SET_ALL_AUTHORS:
       return {
         ...state,
-        allAuthors: action.payload
+        allAuthors: action.payload,
       };
     case SET_DETAIL_AUTHOR:
       return {
         ...state,
-        detailAuthor: action.payload
+        detailAuthor: action.payload,
       };
     case SET_ALL_TAGS:
       return {
         ...state,
-        allTags: action.payload
+        allTags: action.payload,
       };
     case SET_DETAIL_TAG:
       return {
         ...state,
-        detailTag: action.payload
+        detailTag: action.payload,
       };
     default:
       return state;

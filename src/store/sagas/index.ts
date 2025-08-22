@@ -1,16 +1,48 @@
-import { takeEvery, put, call, fork, all, select, takeLeading } from "redux-saga/effects";
-import { LOCATION_CHANGE, push } from 'connected-react-router';
+import {
+  takeEvery,
+  put,
+  call,
+  fork,
+  all,
+  select,
+  takeLeading,
+} from "redux-saga/effects";
+import { LOCATION_CHANGE, push } from "connected-react-router";
 import { setAuthTokens, setAuthError, setLoading } from "../actions";
-import Cookies from 'js-cookie';
-import type { AuthCredentials, AuthError, AuthTokens } from '../../types/auth';
-import { LOGIN_REQUEST } from '../constants';
-import { api, authAPI, storeTokens, TOKEN_KEY } from '../../api';
+import Cookies from "js-cookie";
+import type { AuthCredentials, AuthError, AuthTokens } from "../../types/auth";
+import { LOGIN_REQUEST } from "../constants";
+import { api, authAPI, storeTokens, TOKEN_KEY } from "../../api";
 import { PATHS } from "../../navigation/paths";
-import { handleAllPosts, watchCreatePost, watchDeletePost, watchDetailPost, watchEditPost, watchPageChange } from "./post";
-import { handleAllAuthors, watchAuthorsSelect, watchCreateAuthor, watchDeleteAuthor, watchDetailAuthor, watchEditAuthor } from "./author";
-import { handleAllTags, watchCreateTag, watchDeleteTag, watchDetailTag, watchEditTag, watchTagsSelect } from "./tag";
+import {
+  handleAllPosts,
+  watchCreatePost,
+  watchDeletePost,
+  watchDetailPost,
+  watchEditPost,
+  watchPageChange,
+} from "./post";
+import {
+  handleAllAuthors,
+  watchAuthorsSelect,
+  watchCreateAuthor,
+  watchDeleteAuthor,
+  watchDetailAuthor,
+  watchEditAuthor,
+} from "./author";
+import {
+  handleAllTags,
+  watchCreateTag,
+  watchDeleteTag,
+  watchDetailTag,
+  watchEditTag,
+  watchTagsSelect,
+} from "./tag";
 
-export function* handleLogin(action: { type: string; payload: AuthCredentials }) {
+export function* handleLogin(action: {
+  type: string;
+  payload: AuthCredentials;
+}) {
   try {
     yield put(setLoading(true));
     const response: AuthTokens = yield call(authAPI.login, action.payload);
@@ -19,7 +51,7 @@ export function* handleLogin(action: { type: string; payload: AuthCredentials })
     storeTokens(response);
     yield put(push(PATHS.POSTS));
   } catch (error) {
-    console.error('Login failed:', error);
+    console.error("Login failed:", error);
     const message = error as AuthError;
     yield put(setAuthError(message.response.data.message));
   } finally {
@@ -32,16 +64,16 @@ export function* watchContentSaga() {
 
   const token = Cookies.get(TOKEN_KEY);
   if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   }
 
-  if (path === '/posts') {
+  if (path === "/posts") {
     yield call(handleAllPosts, { payload: { page: 1 } });
   }
-  if (path === '/authors') {
+  if (path === "/authors") {
     yield call(handleAllAuthors);
   }
-  if (path === '/tags') {
+  if (path === "/tags") {
     yield call(handleAllTags);
   }
 }

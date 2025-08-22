@@ -1,5 +1,5 @@
-import { Button, Form, Input, Modal, type FormProps } from "antd"
-import { useEffect } from "react";
+import { Button, Form, Input, Modal, type FormProps } from "antd";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/reducers";
 import type { Tag } from "../../types/tags";
@@ -20,32 +20,40 @@ interface ITagModal {
 
 const TagModal = ({ isOpened, setOpen, tag }: ITagModal) => {
   const dispatch = useDispatch();
-  const validationErrors = useSelector((state: RootState) => state.error.validationErrors);
+  const validationErrors = useSelector(
+    (state: RootState) => state.error.validationErrors
+  );
   const [form] = Form.useForm();
 
-  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const formData = new FormData();
 
-    formData.append('code', values.code);
-    formData.append('name', values.name);
-    values.sort && formData.append('sort', values.sort.toString());
+    formData.append("code", values.code);
+    formData.append("name", values.name);
+    values.sort && formData.append("sort", values.sort.toString());
 
-    tag ? dispatch(editTagRequest(tag.id, formData)) : dispatch(createTagRequest(formData));;
+    tag
+      ? dispatch(editTagRequest(tag.id, formData))
+      : dispatch(createTagRequest(formData));
   };
 
-  const getFieldError = (fieldName: string): string | undefined => {
-    return validationErrors?.find(error => error.field === fieldName)?.message;
-  };
+  const getFieldError = useCallback(
+    (fieldName: string): string | undefined => {
+      return validationErrors?.find((error) => error.field === fieldName)
+        ?.message;
+    },
+    [validationErrors]
+  );
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     form.submit();
-  };
+  }, [form]);
 
-  const handleCancel = () => {
-    setOpen()
-    form.resetFields()
-    dispatch(setValidationError(null))
-  };
+  const handleCancel = useCallback(() => {
+    setOpen();
+    form.resetFields();
+    dispatch(setValidationError(null));
+  }, [setOpen, form]);
 
   useEffect(() => {
     if (tag && isOpened) {
@@ -55,17 +63,17 @@ const TagModal = ({ isOpened, setOpen, tag }: ITagModal) => {
         sort: tag.sort,
       });
     } else {
-      form.resetFields()
+      form.resetFields();
     }
   }, [tag, isOpened, form]);
 
   return (
     <Modal
       open={isOpened}
-      title={tag ? 'Редактировать тег' : 'Создать тег'}
+      title={tag ? "Редактировать тег" : "Создать тег"}
       onCancel={handleCancel}
       footer={[
-        <Button onClick={handleCancel} key="back" >
+        <Button onClick={handleCancel} key="back">
           Отмена
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
@@ -73,17 +81,13 @@ const TagModal = ({ isOpened, setOpen, tag }: ITagModal) => {
         </Button>,
       ]}
     >
-      <Form
-        form={form}
-        labelCol={{ span: 4 }}
-        onFinish={onFinish}
-      >
+      <Form form={form} labelCol={{ span: 4 }} onFinish={onFinish}>
         <Form.Item<FieldType>
           label="Code"
           name="code"
-          rules={[{ required: true, message: 'Please input your code!' }]}
-          help={getFieldError('code')}
-          validateStatus={getFieldError('code') ? 'error' : ''}
+          rules={[{ required: true, message: "Please input your code!" }]}
+          help={getFieldError("code")}
+          validateStatus={getFieldError("code") ? "error" : ""}
         >
           <Input />
         </Form.Item>
@@ -91,23 +95,23 @@ const TagModal = ({ isOpened, setOpen, tag }: ITagModal) => {
         <Form.Item<FieldType>
           label="Name"
           name="name"
-          rules={[{ required: true, message: 'Please input your name!' }]}
-          help={getFieldError('name')}
-          validateStatus={getFieldError('name') ? 'error' : ''}
+          rules={[{ required: true, message: "Please input your name!" }]}
+          help={getFieldError("name")}
+          validateStatus={getFieldError("name") ? "error" : ""}
         >
           <Input />
         </Form.Item>
         <Form.Item<FieldType>
           label="Sort"
           name="sort"
-          help={getFieldError('sort')}
-          validateStatus={getFieldError('sort') ? 'error' : ''}
+          help={getFieldError("sort")}
+          validateStatus={getFieldError("sort") ? "error" : ""}
         >
           <Input />
         </Form.Item>
       </Form>
     </Modal>
-  )
-}
+  );
+};
 
 export default TagModal;
