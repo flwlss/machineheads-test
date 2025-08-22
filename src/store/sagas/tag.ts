@@ -8,6 +8,7 @@ import {
   EDIT_TAG_REQUEST,
   SET_ALL_TAGS_TO_SELECT,
   SET_DETAIL_TAG_REQUEST,
+  SUCCESS_REQUEST,
 } from "../constants";
 import { setLoading, setValidationError } from "../actions";
 import type { ValidationError } from "../../types/posts";
@@ -34,6 +35,7 @@ export function* handleCreateTag(action: { type: string; payload: FormData }) {
     yield call(tagApi.addTag, action.payload);
     yield put(setValidationError(null));
     yield call(handleAllTags);
+    yield put({ type: SUCCESS_REQUEST, payload: true });
   } catch (error) {
     const errorMessages = error as ValidationError[];
     console.error("Failed to create tag:", error);
@@ -73,6 +75,9 @@ export function* handleEditTag(action: {
     yield call(tagApi.editTag, action.id, action.payload);
     yield put(setValidationError(null));
     yield call(handleAllTags);
+    yield put({ type: SUCCESS_REQUEST, payload: true });
+    const updatedAuthor: Tag = yield call(tagApi.getDetailTag, action.id);
+    yield put(setDetailTag(updatedAuthor));
   } catch (error) {
     const errorMessages = error as ValidationError[];
     console.error("Failed to edit tag:", error);

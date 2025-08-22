@@ -5,6 +5,7 @@ import type { RootState } from "../../store/reducers";
 import type { Tag } from "../../types/tags";
 import { createTagRequest, editTagRequest } from "../../store/actions/tag";
 import { setValidationError } from "../../store/actions";
+import { SUCCESS_REQUEST } from "../../store/constants";
 
 type FieldType = {
   code: string;
@@ -22,6 +23,9 @@ const TagModal = ({ isOpened, setOpen, tag }: ITagModal) => {
   const dispatch = useDispatch();
   const validationErrors = useSelector(
     (state: RootState) => state.error.validationErrors
+  );
+  const successRequest = useSelector(
+    (state: RootState) => state.common.successRequest
   );
   const [form] = Form.useForm();
 
@@ -66,6 +70,13 @@ const TagModal = ({ isOpened, setOpen, tag }: ITagModal) => {
       form.resetFields();
     }
   }, [tag, isOpened, form]);
+
+  useEffect(() => {
+    if (successRequest) {
+      handleCancel();
+      dispatch({ type: SUCCESS_REQUEST, payload: false });
+    }
+  }, [successRequest]);
 
   return (
     <Modal

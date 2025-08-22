@@ -8,6 +8,7 @@ import {
   EDIT_AUTHOR_REQUEST,
   SET_ALL_AUTHORS_TO_SELECT,
   SET_DETAIL_AUTHOR_REQUEST,
+  SUCCESS_REQUEST,
 } from "../constants";
 import { setLoading, setValidationError } from "../actions";
 import type { ValidationError } from "../../types/posts";
@@ -37,6 +38,7 @@ export function* handleCreateAuthor(action: {
     yield call(authorApi.addAuthor, action.payload);
     yield put(setValidationError(null));
     yield call(handleAllAuthors);
+    yield put({ type: SUCCESS_REQUEST, payload: true });
   } catch (error) {
     const errorMessages = error as ValidationError[];
     console.error("Failed to create author:", error);
@@ -78,7 +80,13 @@ export function* handleEditAuthor(action: {
     yield put(setLoading(true));
     yield call(authorApi.editAuthor, action.id, action.payload);
     yield put(setValidationError(null));
+    const updatedAuthor: DetailAuthor = yield call(
+      authorApi.getDetailAuthor,
+      action.id
+    );
+    yield put(setDetailAuthor(updatedAuthor));
     yield call(handleAllAuthors);
+    yield put({ type: SUCCESS_REQUEST, payload: true });
   } catch (error) {
     const errorMessages = error as ValidationError[];
     console.error("Failed to edit author:", error);

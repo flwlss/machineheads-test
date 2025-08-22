@@ -10,6 +10,7 @@ import {
   editAuthorRequest,
 } from "../../store/actions/author";
 import { setValidationError } from "../../store/actions";
+import { SUCCESS_REQUEST } from "../../store/constants";
 
 type FieldType = {
   name: string;
@@ -30,6 +31,9 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
   const dispatch = useDispatch();
   const validationErrors = useSelector(
     (state: RootState) => state.error.validationErrors
+  );
+  const successRequest = useSelector(
+    (state: RootState) => state.common.successRequest
   );
   const [form] = Form.useForm();
   const [file, setFile] = useState<File | null>(null);
@@ -105,6 +109,13 @@ const AuthorModal = ({ isOpened, setOpen, author }: IAuthorModal) => {
       }
     };
   }, [file]);
+
+  useEffect(() => {
+    if (successRequest) {
+      handleCancel();
+      dispatch({ type: SUCCESS_REQUEST, payload: false });
+    }
+  }, [successRequest]);
 
   return (
     <Modal

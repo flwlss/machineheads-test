@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   SET_ALL_AUTHORS_TO_SELECT,
   SET_ALL_TAGS_TO_SELECT,
+  SUCCESS_REQUEST,
 } from "../../store/constants";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/reducers";
@@ -43,6 +44,9 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
   );
   const validationErrors = useSelector(
     (state: RootState) => state.error.validationErrors
+  );
+  const successRequest = useSelector(
+    (state: RootState) => state.common.successRequest
   );
   const [form] = Form.useForm();
   const [file, setFile] = useState<File | null>(null);
@@ -147,6 +151,13 @@ const PostModal = ({ isOpened, setOpen, post }: IPostModal) => {
       }
     };
   }, [file]);
+
+  useEffect(() => {
+    if (successRequest) {
+      handleCancel();
+      dispatch({ type: SUCCESS_REQUEST, payload: false });
+    }
+  }, [successRequest]);
 
   return (
     <Modal

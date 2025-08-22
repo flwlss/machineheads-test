@@ -1,9 +1,10 @@
 import type { PaginationMeta } from "../../api";
-import { SET_LOADING, SET_PAGINATION } from "../constants";
+import { SET_LOADING, SET_PAGINATION, SUCCESS_REQUEST } from "../constants";
 
 type CommonState = {
   pagination: PaginationMeta;
   loading: boolean;
+  successRequest: boolean;
 };
 
 const initialState: CommonState = {
@@ -14,6 +15,7 @@ const initialState: CommonState = {
     totalCount: 0,
   },
   loading: false,
+  successRequest: false,
 };
 
 const common = (
@@ -30,6 +32,11 @@ const common = (
       return {
         ...state,
         loading: action.payload,
+      };
+    case SUCCESS_REQUEST:
+      return {
+        ...state,
+        successRequest: action.payload,
       };
     default:
       return state;

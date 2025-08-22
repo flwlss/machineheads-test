@@ -6,6 +6,8 @@ export const SET_AUTH_TOKENS = "SET_AUTH_TOKENS";
 
 export const SET_LOADING = "SET_LOADING";
 
+export const SUCCESS_REQUEST = "SUCCESS_REQUEST";
+
 export const VALIDATION_ERROR = "VALIDATION_ERROR";
 
 export const SET_ALL_POSTS = "SET_ALL_POSTS";

@@ -8,6 +8,7 @@ import {
   EDIT_POST_REQUEST,
   PAGE_CHANGE,
   SET_DETAIL_POST_REQUEST,
+  SUCCESS_REQUEST,
 } from "../constants";
 import type { DetailPost, ValidationError } from "../../types/posts";
 import type { RootState } from "../reducers";
@@ -42,6 +43,7 @@ export function* handleCreatePost(action: { type: string; payload: FormData }) {
       payload: { page: currentPage },
     });
     yield put(setValidationError(null));
+    yield put({ type: SUCCESS_REQUEST, payload: true });
   } catch (error) {
     const errorMessages = error as ValidationError[];
     console.error("Failed to create post:", error);
@@ -89,7 +91,13 @@ export function* handleEditPost(action: {
       type: PAGE_CHANGE,
       payload: { page: currentPage },
     });
+    const updatedAuthor: DetailPost = yield call(
+      postApi.getDetailPost,
+      action.id
+    );
+    yield put(setDetailPost(updatedAuthor));
     yield put(setValidationError(null));
+    yield put({ type: SUCCESS_REQUEST, payload: true });
   } catch (error) {
     const errorMessages = error as ValidationError[];
     console.error("Failed to edit post:", error);
